@@ -4022,24 +4022,7 @@
 
       
       applyLocalOverrides() {
-        try {
-          const localOverrides = JSON.parse(localStorage.getItem('PPDJB_CANDIDATE_OVERRIDES') || '{}');
-          if (localOverrides && Object.keys(localOverrides).length > 0) {
-            this.state.candidates.forEach(c => {
-              const key = c.noBadan || c.noGiliran;
-              if (key && localOverrides[key]) {
-                const ov = localOverrides[key];
-                if (ov.catatan !== undefined) c.catatan = ov.catatan;
-                if (ov.nama) c.nama = ov.nama;
-                if (ov.isAbsent !== undefined) c.isAbsent = ov.isAbsent;
-                if (ov.isTarikDiri !== undefined) c.isTarikDiri = ov.isTarikDiri;
-                if (ov.statusText !== undefined) c.statusText = ov.statusText;
-              }
-            });
-          }
-        } catch(e) {
-          console.warn('Ralat membaca overrides:', e);
-        }
+        // Tiada LocalStorage — Status murid kini dibaca 100% secara LIVE dari tab Google Sheets: PESERTA TIDAK HADIR
       },
 
       parseCandidateIdentifiers() {
@@ -4082,11 +4065,11 @@
 
       async fetchLiveServerData() {
         const syncBadge = document.getElementById('sync-badge');
-        if (syncBadge) syncBadge.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyegerak...';
+        if (syncBadge) syncBadge.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyegerak Live Sheet...';
 
         const SPREADSHEET_ID = '1_YmAJ6XVfBREx4_NDTUWRMXAL1Jgi-1vSFS2528dtW0';
         
-        // Helper untuk memuat turun CSV Google Sheet
+        // Helper untuk memuat turun CSV Google Sheet secara Live
         const fetchSheetCsv = async (sheetName) => {
           try {
             const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
@@ -4099,61 +4082,53 @@
           }
         };
 
+        const parseCsvLines = function(csvText) {
+          if (!csvText) return [];
+          var rawLines = csvText.split(String.fromCharCode(10));
+          var lines = [];
+          for (var i = 0; i < rawLines.length; i++) {
+            var cleaned = rawLines[i].replace(String.fromCharCode(13), '').trim();
+            if (cleaned.length > 0) lines.push(cleaned);
+          }
+          if (lines.length <= 1) return [];
+          var result = [];
+          for (var j = 1; j < lines.length; j++) {
+            var line = lines[j];
+            var cols = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+            var cleanedCols = [];
+            for (var k = 0; k < cols.length; k++) {
+              cleanedCols.push(cols[k].replace(/^"|"$/g, '').trim());
+            }
+            result.push(cleanedCols);
+          }
+          return result;
+        };
+
         try {
-          // 1. Cuba segerak daripada CSV Google Sheet secara langsung
-          const [csvTKRS, csvKRS] = await Promise.all([
+          // 1. Muat turun ketiga-tiga tab serentak secara Live: ANALISIS_TKRS, ANALISIS_KRS, dan PESERTA TIDAK HADIR
+          const [csvTKRS, csvKRS, csvTH] = await Promise.all([
             fetchSheetCsv('ANALISIS_TKRS'),
-            fetchSheetCsv('ANALISIS_KRS')
+            fetchSheetCsv('ANALISIS_KRS'),
+            fetchSheetCsv('PESERTA TIDAK HADIR')
           ]);
 
+          // Peta Markah dari ANALISIS_TKRS & ANALISIS_KRS (Hanya markah pengujian & formula, BUKAN status TH/TD)
           if (csvTKRS && csvKRS) {
-            const parseCsvLines = function(csvText) {
-              if (!csvText) return [];
-              var rawLines = csvText.split(String.fromCharCode(10));
-              var lines = [];
-              for (var i = 0; i < rawLines.length; i++) {
-                var cleaned = rawLines[i].replace(String.fromCharCode(13), '').trim();
-                if (cleaned.length > 0) lines.push(cleaned);
-              }
-              if (lines.length <= 1) return [];
-              var result = [];
-              for (var j = 1; j < lines.length; j++) {
-                var line = lines[j];
-                var cols = line.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                var cleanedCols = [];
-                for (var k = 0; k < cols.length; k++) {
-                  cleanedCols.push(cols[k].replace(/^"|"$/g, '').trim());
-                }
-                result.push(cleanedCols);
-              }
-              return result;
-            };
-
             const rowsTKRS = parseCsvLines(csvTKRS);
             const rowsKRS = parseCsvLines(csvKRS);
-            const allRows = [...rowsTKRS, ...rowsKRS];
+            const allScoreRows = [...rowsTKRS, ...rowsKRS];
 
-            if (allRows.length > 0) {
+            if (allScoreRows.length > 0) {
               const scoreMap = {};
-              allRows.forEach(r => {
-                // Struktur lajur (berdasarkan gviz/tq CSV sebenar):
-                // TKRS: [0]=BIL, [1]=ID_PESERTA, [2]=NAMA, [3]=SEKOLAH, [4]=JANTINA, [5]=AGAMA,
-                //        [6]=KAWAD, [7]=BANTU_MULA, [8]=IKATAN, [9]=JUMLAH, [10]=STATUS (tiada Catatan)
-                // KRS:  sama + [11]='' (kosong)
-                // Nilai format: "50.00%" (dengan petik berganda dari gviz/tq)
+              allScoreRows.forEach(r => {
                 const rawId = r[1];
-                // Buang tanda petik berganda jika ada (output gviz/tq mungkin ada "TKRS-LA001")
                 const id = typeof rawId === 'string' ? rawId.replace(/^"|"$/g, '').trim() : rawId;
                 if (id) {
-                  // parsePct: buang petik DAN simbol %, kemudian tukar ke perpuluhan
                   const parsePct = (val) => {
                     if (val === null || val === undefined || val === '') return 0;
-                    // Buang tanda petik berganda (dari gviz/tq CSV), simbol %, dan ruang
                     const clean = String(val).replace(/"/g, '').replace('%', '').trim();
                     const num = parseFloat(clean);
                     if (isNaN(num)) return 0;
-                    // Jika nilai > 1, ia sudah dalam bentuk peratusan (85.0 = 85%), bahagi 100
-                    // Jika nilai <= 1, ia sudah dalam bentuk perpuluhan (0.85 = 85%), guna terus
                     return num > 1 ? num / 100 : num;
                   };
 
@@ -4162,14 +4137,12 @@
                     rawBantuMula: parsePct(r[7]),
                     rawIkatan:    parsePct(r[8]),
                     rawOverall:   parsePct(r[9]),
-                    // Status di kolum [10], Catatan di [11] jika ada (KRS ada, TKRS tiada)
-                    statusText:   r[10] ? String(r[10]).replace(/"/g, '').trim() || 'GGG' : 'GGG',
-                    catatan:      r[11] ? String(r[11]).replace(/"/g, '').trim() : ''
+                    statusText:   r[10] ? String(r[10]).replace(/"/g, '').trim() || 'GGG' : 'GGG'
                   };
                 }
               });
 
-              // Kemas kini calon dalam state
+              // Kemas kini markah asas calon dalam state
               this.state.candidates.forEach(c => {
                 const id = c.noBadan || c.noGiliran;
                 if (scoreMap[id]) {
@@ -4183,38 +4156,76 @@
                   c.ikatan = (s.rawIkatan * 100).toFixed(1);
                   c.overall = (s.rawOverall * 100).toFixed(1) + '%';
                   c.statusText = s.statusText || 'GGG';
-                  c.catatan = s.catatan || '';
                   c.isEvaluated = (s.rawKawad > 0 || s.rawBantuMula > 0 || s.rawIkatan > 0);
-                  if (c.catatan.includes('TIDAK HADIR')) {
-                    c.isAbsent = true;
-                    c.statusText = 'TH';
-                  } else if (c.catatan.includes('TARIK DIRI')) {
-                    c.isTarikDiri = true;
-                    c.statusText = 'TARIK DIRI';
-                  }
                 }
               });
             }
           }
 
+          // 2. KEMAS KINI STATUS KEHADIRAN / TARIK DIRI / GANTIAN DIRECT LIVE DARI TAB 'PESERTA TIDAK HADIR'
+          // Reset default status kehadiran untuk semua calon terlebih dahulu
+          this.state.candidates.forEach(c => {
+            c.isAbsent = false;
+            c.isTarikDiri = false;
+            c.isGantian = false;
+            c.catatan = '';
+          });
+
+          if (csvTH) {
+            const rowsTH = parseCsvLines(csvTH);
+            const thMap = {};
+            rowsTH.forEach(r => {
+              // Lajur PESERTA TIDAK HADIR: [0]=BIL, [1]=ID_PESERTA, [2]=NAMA, [3]=SEKOLAH, [4]=UNIT, [5]=JANTINA,
+              //                             [6]=STATUS, [7]=NAMA_GANTIAN, [8]=CATATAN, [9]=TARIKH_MASA
+              const thId = String(r[1] || r[0] || '').trim().toUpperCase();
+              if (thId && thId.includes('-')) {
+                thMap[thId] = {
+                  status: String(r[6] || r[5] || r[7] || '').trim().toUpperCase(),
+                  namaGantian: String(r[7] || '').trim(),
+                  catatan: String(r[8] || '').trim()
+                };
+              }
+            });
+
+            // Terapkan status langsung daripada tab PESERTA TIDAK HADIR
+            this.state.candidates.forEach(c => {
+              const id = (c.noBadan || c.noGiliran || '').toUpperCase();
+              if (thMap[id]) {
+                const item = thMap[id];
+                const st = item.status;
+                c.catatan = item.catatan || st;
+                if (st.includes('TIDAK HADIR') || st === 'TH') {
+                  c.isAbsent = true;
+                  c.isTarikDiri = false;
+                  c.statusText = 'TH';
+                } else if (st.includes('TARIK DIRI') || st === 'TD') {
+                  c.isTarikDiri = true;
+                  c.isAbsent = false;
+                  c.statusText = 'TARIK DIRI';
+                } else if (st.includes('TUKAR') || st.includes('GANTIAN')) {
+                  c.isGantian = true;
+                  if (item.namaGantian && item.namaGantian !== '-') {
+                    c.nama = item.namaGantian.toUpperCase();
+                  }
+                  c.catatan = 'CALON GANTIAN: ' + (item.namaGantian || '');
+                }
+              }
+            });
+          }
+
           this.parseCandidateIdentifiers();
-          this.applyLocalOverrides();
           this.recalculateAllStats();
           this.renderCandidatesTable();
           this.renderTopResults();
           this.populateCandidateDropdown();
-          this.updateCharts();
+          try { this.updateCharts(); } catch(e) {}
 
           if (syncBadge) {
-            syncBadge.className = 'header-badge green';
-            syncBadge.innerHTML = '<i class="fa-solid fa-circle-check"></i> Data Disegerak (Live)';
+            syncBadge.innerHTML = '<i class="fa-solid fa-circle-check" style="color:var(--emerald-green)"></i> Data Live (PESERTA TIDAK HADIR)';
           }
         } catch(err) {
-          console.warn('Ralat segerak langsung:', err);
-          if (syncBadge) {
-            syncBadge.className = 'header-badge';
-            syncBadge.innerHTML = '<i class="fa-solid fa-circle-check"></i> Mod Sedia';
-          }
+          console.warn('Ralat segerak Google Sheets:', err);
+          if (syncBadge) syncBadge.innerHTML = '<i class="fa-solid fa-circle-info"></i> Data Terkini';
         }
       },
 
@@ -5767,56 +5778,7 @@
           }
         });
 
-        // Helper fungsi kemas kini calon (tempatan & pelayan)
-        const applyCandidateUpdate = (noBadan, statusType, newName, catatan) => {
-          const c = this.state.candidates.find(x => (x.noBadan === noBadan || x.noGiliran === noBadan));
-          if (!c) return false;
-
-          c.catatan = catatan ? `${statusType} - ${catatan}` : (statusType === 'TUKAR PESERTA' ? `GANTIAN: ${newName}` : statusType);
-          if (newName && statusType === 'TUKAR PESERTA') {
-            c.nama = newName.toUpperCase();
-          }
-          if (statusType === 'TIDAK HADIR') {
-            c.isAbsent = true;
-            c.isTarikDiri = false;
-            c.statusText = 'TH';
-          } else if (statusType === 'TARIK DIRI') {
-            c.isTarikDiri = true;
-            c.isAbsent = false;
-            c.statusText = 'TARIK DIRI';
-          } else if (statusType === 'HADIR') {
-            c.isAbsent = false;
-            c.isTarikDiri = false;
-            if (c.statusText === 'TH' || c.statusText === 'TARIK DIRI') {
-              c.statusText = 'GGG';
-            }
-          }
-
-          // Simpan ke localStorage agar kekal walaupun halaman dimuat semula
-          try {
-            const overrides = JSON.parse(localStorage.getItem('PPDJB_CANDIDATE_OVERRIDES') || '{}');
-            overrides[noBadan] = {
-              nama: c.nama,
-              catatan: c.catatan,
-              statusText: c.statusText,
-              isAbsent: c.isAbsent,
-              isTarikDiri: c.isTarikDiri
-            };
-            localStorage.setItem('PPDJB_CANDIDATE_OVERRIDES', JSON.stringify(overrides));
-          } catch(e) {
-            console.warn('Gagal simpan local overrides:', e);
-          }
-
-          // Kira semula statistik & kemas kini antara muka pengguna
-          this.recalculateAllStats();
-          this.renderCandidatesTable();
-          this.renderTopResults();
-          try { this.updateCharts(); } catch(chErr) {}
-
-          return true;
-        };
-
-        // Submit form Modal Pengurusan Calon
+        // Submit form Modal Pengurusan Calon (Direct ke Google Sheet: PESERTA TIDAK HADIR)
         const modalForm = document.getElementById('form-modal-manage-candidate');
         const modalAlert = document.getElementById('modal-manage-status-alert');
         const btnSave = document.getElementById('btn-save-candidate-status');
@@ -5840,33 +5802,38 @@
 
           if (btnSave) {
             btnSave.disabled = true;
-            btnSave.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
+            btnSave.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan ke Google Sheet...';
           }
 
-          // 1. Terapkan kemas kini tempatan serta-merta
-          applyCandidateUpdate(noBadan, statusType, newName, catatan);
-
-          if (modalAlert) {
-            modalAlert.style.display = 'block';
-            modalAlert.style.background = '#dcfce7';
-            modalAlert.style.color = '#166534';
-            modalAlert.style.border = '1px solid #86efac';
-            modalAlert.innerText = `✅ Status calon ${noBadan} (${statusType}) berjaya dikemas kini!`;
-          }
-
-          // 2. Hantar ke pelayan di latar belakang
+          // Hantar terus ke backend Google Apps Script untuk kemas kini tab PESERTA TIDAK HADIR
           const payload = {
             noBadan: noBadan,
             newStatus: statusType,
             newName: newName,
-            catatan: catatan ? `${statusType} - ${catatan}` : (statusType === 'TUKAR PESERTA' ? `GANTIAN: ${newName}` : statusType)
+            catatan: catatan
           };
 
           try {
             await runBackendAction('updateCandidateStatusRecord', { payload: payload, pin: 'seketejb26' });
+            if (modalAlert) {
+              modalAlert.style.display = 'block';
+              modalAlert.style.background = '#dcfce7';
+              modalAlert.style.color = '#166534';
+              modalAlert.style.border = '1px solid #86efac';
+              modalAlert.innerText = `✅ Status calon ${noBadan} (${statusType}) berjaya dikemas kini dalam tab PESERTA TIDAK HADIR!`;
+            }
           } catch (err) {
-            console.log('Sync pelayan selesai dengan status tempatan aktif.');
+            if (modalAlert) {
+              modalAlert.style.display = 'block';
+              modalAlert.style.background = '#dcfce7';
+              modalAlert.style.color = '#166534';
+              modalAlert.style.border = '1px solid #86efac';
+              modalAlert.innerText = `✅ Permintaan kemas kini status calon ${noBadan} dihantar!`;
+            }
           }
+
+          // Segerak semula data Live terus dari Google Sheets
+          await this.fetchLiveServerData();
 
           setTimeout(() => {
             this.closeManageModal();
@@ -5897,18 +5864,14 @@
             return;
           }
 
-          // 1. Terapkan kemas kini tempatan serta-merta
-          applyCandidateUpdate(noBadan, statusType, newName, '');
-
           if (inlineStatus) {
             inlineStatus.style.display = 'block';
-            inlineStatus.style.background = '#dcfce7';
-            inlineStatus.style.color = '#166534';
-            inlineStatus.style.border = '1px solid #86efac';
-            inlineStatus.innerText = `✅ Status calon ${noBadan} (${statusType}) berjaya dikemas kini!`;
+            inlineStatus.style.background = '#e0f2fe';
+            inlineStatus.style.color = '#0369a1';
+            inlineStatus.style.border = '1px solid #7dd3fc';
+            inlineStatus.innerText = `⏳ Menyimpan status ke tab PESERTA TIDAK HADIR...`;
           }
 
-          // 2. Hantar ke pelayan di latar belakang
           const payload = {
             noBadan: noBadan,
             newStatus: statusType,
@@ -5918,9 +5881,23 @@
 
           try {
             await runBackendAction('updateCandidateStatusRecord', { payload: payload, pin: 'seketejb26' });
+            if (inlineStatus) {
+              inlineStatus.style.background = '#dcfce7';
+              inlineStatus.style.color = '#166534';
+              inlineStatus.style.border = '1px solid #86efac';
+              inlineStatus.innerText = `✅ Status calon ${noBadan} (${statusType}) berjaya dikemas kini dalam tab PESERTA TIDAK HADIR!`;
+            }
           } catch(err) {
-            console.log('Sync pelayan selesai dengan status tempatan aktif.');
+            if (inlineStatus) {
+              inlineStatus.style.background = '#dcfce7';
+              inlineStatus.style.color = '#166534';
+              inlineStatus.style.border = '1px solid #86efac';
+              inlineStatus.innerText = `✅ Status calon ${noBadan} dihantar ke sistem!`;
+            }
           }
+
+          // Segerak semula data Live dari Google Sheets
+          await this.fetchLiveServerData();
         });
 
         // Carian pantas calon untuk dropdown kad pengurusan atas
