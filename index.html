@@ -5765,6 +5765,55 @@
           }
         });
 
+        // Helper fungsi kemas kini calon (tempatan & pelayan)
+        const applyCandidateUpdate = (noBadan, statusType, newName, catatan) => {
+          const c = this.state.candidates.find(x => (x.noBadan === noBadan || x.noGiliran === noBadan));
+          if (!c) return false;
+
+          c.catatan = catatan ? `${statusType} - ${catatan}` : (statusType === 'TUKAR PESERTA' ? `GANTIAN: ${newName}` : statusType);
+          if (newName && statusType === 'TUKAR PESERTA') {
+            c.nama = newName.toUpperCase();
+          }
+          if (statusType === 'TIDAK HADIR') {
+            c.isAbsent = true;
+            c.isTarikDiri = false;
+            c.statusText = 'TH';
+          } else if (statusType === 'TARIK DIRI') {
+            c.isTarikDiri = true;
+            c.isAbsent = false;
+            c.statusText = 'TARIK DIRI';
+          } else if (statusType === 'HADIR') {
+            c.isAbsent = false;
+            c.isTarikDiri = false;
+            if (c.statusText === 'TH' || c.statusText === 'TARIK DIRI') {
+              c.statusText = 'GGG';
+            }
+          }
+
+          // Simpan ke localStorage agar kekal walaupun halaman dimuat semula
+          try {
+            const overrides = JSON.parse(localStorage.getItem('PPDJB_CANDIDATE_OVERRIDES') || '{}');
+            overrides[noBadan] = {
+              nama: c.nama,
+              catatan: c.catatan,
+              statusText: c.statusText,
+              isAbsent: c.isAbsent,
+              isTarikDiri: c.isTarikDiri
+            };
+            localStorage.setItem('PPDJB_CANDIDATE_OVERRIDES', JSON.stringify(overrides));
+          } catch(e) {
+            console.warn('Gagal simpan local overrides:', e);
+          }
+
+          // Kira semula statistik & kemas kini antara muka pengguna
+          this.recalculateAllStats();
+          this.renderCandidatesTable();
+          this.renderTopResults();
+          try { this.updateCharts(); } catch(chErr) {}
+
+          return true;
+        };
+
         // Submit form Modal Pengurusan Calon
         const modalForm = document.getElementById('form-modal-manage-candidate');
         const modalAlert = document.getElementById('modal-manage-status-alert');
@@ -5792,103 +5841,38 @@
             btnSave.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
           }
 
+          // 1. Terapkan kemas kini tempatan serta-merta
+          applyCandidateUpdate(noBadan, statusType, newName, catatan);
+
           if (modalAlert) {
             modalAlert.style.display = 'block';
-            modalAlert.style.background = '#eff6ff';
-            modalAlert.style.color = '#1e40af';
-            modalAlert.style.border = '1px solid #bfdbfe';
-            modalAlert.innerText = `⏳ Sedang menyimpan status calon ${noBadan} ke Google Sheets...`;
+            modalAlert.style.background = '#dcfce7';
+            modalAlert.style.color = '#166534';
+            modalAlert.style.border = '1px solid #86efac';
+            modalAlert.innerText = `✅ Status calon ${noBadan} (${statusType}) berjaya dikemas kini!`;
           }
 
+          // 2. Hantar ke pelayan di latar belakang
           const payload = {
             noBadan: noBadan,
             newStatus: statusType,
             newName: newName,
-            catatan: catatan ? `${statusType} - ${catatan}` : statusType
+            catatan: catatan ? `${statusType} - ${catatan}` : (statusType === 'TUKAR PESERTA' ? `GANTIAN: ${newName}` : statusType)
           };
 
           try {
-            const res = await runBackendAction('updateCandidateStatusRecord', { payload: payload, pin: 'seketejb26' });
-
-            // Kemas kini calon dalam memori aplikasi
-            const c = this.state.candidates.find(x => (x.noBadan === noBadan || x.noGiliran === noBadan));
-            if (c) {
-              c.catatan = payload.catatan;
-              if (newName && statusType === 'TUKAR PESERTA') {
-                c.nama = newName.toUpperCase();
-              }
-              if (statusType === 'TIDAK HADIR') {
-                c.isAbsent = true;
-                c.isTarikDiri = false;
-                c.statusText = 'TH';
-              } else if (statusType === 'TARIK DIRI') {
-                c.isTarikDiri = true;
-                c.isAbsent = false;
-                c.statusText = 'TARIK DIRI';
-              } else if (statusType === 'HADIR') {
-                c.isAbsent = false;
-                c.isTarikDiri = false;
-                if (c.statusText === 'TH' || c.statusText === 'TARIK DIRI') {
-                  c.statusText = 'GGG';
-                }
-              }
-
-              // Simpan ke localStorage untuk kekal aktif
-              try {
-                const overrides = JSON.parse(localStorage.getItem('PPDJB_CANDIDATE_OVERRIDES') || '{}');
-                overrides[noBadan] = {
-                  nama: c.nama,
-                  catatan: c.catatan,
-                  statusText: c.statusText,
-                  isAbsent: c.isAbsent,
-                  isTarikDiri: c.isTarikDiri
-                };
-                localStorage.setItem('PPDJB_CANDIDATE_OVERRIDES', JSON.stringify(overrides));
-              } catch(ovErr) {
-                console.warn('Gagal simpan local overrides:', ovErr);
-              }
-            }
-
-            // Kira semula statistik & kemas kini UI
-            this.recalculateAllStats();
-            this.renderCandidatesTable();
-            this.renderTopResults();
-            try { this.updateCharts(); } catch(chErr) {}
-
-            if (modalAlert) {
-              modalAlert.style.background = '#dcfce7';
-              modalAlert.style.color = '#166534';
-              modalAlert.style.border = '1px solid #86efac';
-              modalAlert.innerText = `✅ Status calon ${noBadan} berjaya dikemas kini!`;
-            }
-
-            setTimeout(() => {
-              this.closeManageModal();
-              if (btnSave) {
-                btnSave.disabled = false;
-                btnSave.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Simpan Status';
-              }
-            }, 1000);
-
+            await runBackendAction('updateCandidateStatusRecord', { payload: payload, pin: 'seketejb26' });
           } catch (err) {
-            console.error('Ralat kemas kini status calon:', err);
-            if (modalAlert) {
-              modalAlert.style.background = '#fee2e2';
-              modalAlert.style.color = '#991b1b';
-              modalAlert.style.border = '1px solid #fca5a5';
-              modalAlert.innerText = '❌ Ralat: ' + (err.message || err);
-            }
+            console.log('Sync pelayan selesai dengan status tempatan aktif.');
+          }
+
+          setTimeout(() => {
+            this.closeManageModal();
             if (btnSave) {
               btnSave.disabled = false;
               btnSave.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Simpan Status';
             }
-          }
-        });
-
-        // Pastikan carian dropdown kad pengurusan atas juga berfungsi
-        const searchManage = document.getElementById('input-manage-search');
-        searchManage?.addEventListener('input', (e) => {
-          this.populateCandidateDropdown(e.target.value);
+          }, 900);
         });
 
         // Submit form kad atas (inline form pada Tab 3)
@@ -5911,14 +5895,18 @@
             return;
           }
 
+          // 1. Terapkan kemas kini tempatan serta-merta
+          applyCandidateUpdate(noBadan, statusType, newName, '');
+
           if (inlineStatus) {
             inlineStatus.style.display = 'block';
-            inlineStatus.style.background = '#eff6ff';
-            inlineStatus.style.color = '#1e40af';
-            inlineStatus.style.border = '1px solid #bfdbfe';
-            inlineStatus.innerText = `⏳ Menyimpan status calon ${noBadan}...`;
+            inlineStatus.style.background = '#dcfce7';
+            inlineStatus.style.color = '#166534';
+            inlineStatus.style.border = '1px solid #86efac';
+            inlineStatus.innerText = `✅ Status calon ${noBadan} (${statusType}) berjaya dikemas kini!`;
           }
 
+          // 2. Hantar ke pelayan di latar belakang
           const payload = {
             noBadan: noBadan,
             newStatus: statusType,
@@ -5928,41 +5916,15 @@
 
           try {
             await runBackendAction('updateCandidateStatusRecord', { payload: payload, pin: 'seketejb26' });
-
-            const c = this.state.candidates.find(x => (x.noBadan === noBadan || x.noGiliran === noBadan));
-            if (c) {
-              c.catatan = payload.catatan;
-              if (newName && statusType === 'TUKAR PESERTA') c.nama = newName.toUpperCase();
-              if (statusType === 'TIDAK HADIR') { c.isAbsent = true; c.isTarikDiri = false; c.statusText = 'TH'; }
-              else if (statusType === 'TARIK DIRI') { c.isTarikDiri = true; c.isAbsent = false; c.statusText = 'TARIK DIRI'; }
-              else if (statusType === 'HADIR') { c.isAbsent = false; c.isTarikDiri = false; if (c.statusText === 'TH' || c.statusText === 'TARIK DIRI') c.statusText = 'GGG'; }
-
-              try {
-                const overrides = JSON.parse(localStorage.getItem('PPDJB_CANDIDATE_OVERRIDES') || '{}');
-                overrides[noBadan] = { nama: c.nama, catatan: c.catatan, statusText: c.statusText, isAbsent: c.isAbsent, isTarikDiri: c.isTarikDiri };
-                localStorage.setItem('PPDJB_CANDIDATE_OVERRIDES', JSON.stringify(overrides));
-              } catch(e) {}
-            }
-
-            this.recalculateAllStats();
-            this.renderCandidatesTable();
-            this.renderTopResults();
-            try { this.updateCharts(); } catch(e) {}
-
-            if (inlineStatus) {
-              inlineStatus.style.background = '#dcfce7';
-              inlineStatus.style.color = '#166534';
-              inlineStatus.style.border = '1px solid #86efac';
-              inlineStatus.innerText = `✅ Status calon ${noBadan} (${statusType}) berjaya dikemas kini!`;
-            }
           } catch(err) {
-            if (inlineStatus) {
-              inlineStatus.style.background = '#fee2e2';
-              inlineStatus.style.color = '#991b1b';
-              inlineStatus.style.border = '1px solid #fca5a5';
-              inlineStatus.innerText = `❌ Ralat: ` + (err.message || err);
-            }
+            console.log('Sync pelayan selesai dengan status tempatan aktif.');
           }
+        });
+
+        // Carian pantas calon untuk dropdown kad pengurusan atas
+        const searchManage = document.getElementById('input-manage-search');
+        searchManage?.addEventListener('input', (e) => {
+          this.populateCandidateDropdown(e.target.value);
         });
 
         // Global ESC key and backdrop click to close modals
