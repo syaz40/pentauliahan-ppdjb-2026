@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pusat Kawalan & Analisis Pentauliahan KRS / TKRS PPD Johor Bahru 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="app-container">
+    
+    <!-- =========================================================================
+         HEADER UTAMA KORPORAT
+         ========================================================================= -->
+    <header class="main-header">
+      <div>
+        <div class="header-top-row">
+          <div class="header-badge">
+            🏛️ PPD JOHOR BAHRU • PENTAULIAHAN 2026
+          </div>
+          <!-- LIVE REAL-TIME SYNC BADGE -->
+          <div id="live-sync-badge" class="sync-indicator">
+            <span class="pulse-dot-live"></span>
+            <span>Sync Masa Nyata (Live)</span>
+          </div>
+        </div>
+        <h1 class="header-title">Dashboard Pentauliahan Pangkat & Analisis Keputusan</h1>
+        <p class="header-subtitle">Ujian Kenaikan Pangkat Sarjan KRS (Menengah) & Koperal TKRS (Rendah) • 22 Ogos 2026</p>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn-header" id="btn-manual-sync">
+          🔄 Synchronize Sekarang
+        </button>
+        <button class="btn-header" id="btn-theme-toggle">
+          🌙 Mod Gelap
+        </button>
+        <button class="btn-header" id="btn-print-report">
+          🖨️ Cetak Laporan
+        </button>
+        <button class="btn-header btn-admin-gate" id="btn-admin-gate">
+          <span id="btn-admin-gate-text">🔒 Log Masuk Urus Setia</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- =========================================================================
+         BAR NAVIGASI TAB
+         ========================================================================= -->
+    <nav class="nav-tabs-wrapper">
+      <button class="tab-button active" data-tab="tab-overview">
+        📊 Ringkasan Eksekutif
+      </button>
+      <button class="tab-button" data-tab="tab-awards">
+        🏆 Anugerah & 5 Terbaik Pengujian
+      </button>
+      <button class="tab-button" data-tab="tab-elements">
+        📈 Analisis 22 & 15 Elemen Kawad
+      </button>
+      <button class="tab-button" data-tab="tab-schools">
+        🏫 Prestasi Sekolah
+      </button>
+      <button class="tab-button" data-tab="tab-demographics">
+        🚻 Demografi Jantina
+      </button>
+      <button class="tab-button" data-tab="tab-directory">
+        📋 Direktori Calon & Slip
+      </button>
+      <!-- TAB KHAS URUS SETIA (DILINDUNGI PIN / PASSWORD) -->
+      <button class="tab-button" id="tab-btn-admin" data-tab="tab-admin" style="display: none; background: #fef08a; color: #854d0e;">
+        ⚙️ Portal Urus Setia
+      </button>
+    </nav>
+
+    <!-- =========================================================================
+         TAB 1: RINGKASAN EKSEKUTIF (OVERVIEW)
+         ========================================================================= -->
+    <section id="tab-overview" class="tab-pane active">
+      <div class="kpi-grid">
+        <div class="kpi-card border-blue">
+          <div class="kpi-label">Total Calon Berdaftar</div>
+          <div class="kpi-value" id="kpi-total-candidates">0</div>
+          <div class="kpi-sub" id="kpi-total-sub">0 TKRS • 0 KRS</div>
+        </div>
+        <div class="kpi-card border-green">
+          <div class="kpi-label">Layak Ditauliahkan</div>
+          <div class="kpi-value" id="kpi-pass-count">0</div>
+          <div class="kpi-sub" id="kpi-pass-rate">0% Kadar Kelulusan</div>
+        </div>
+        <div class="kpi-card border-red">
+          <div class="kpi-label">Belum Capai Tahap</div>
+          <div class="kpi-value" id="kpi-failed-count">0</div>
+          <div class="kpi-sub" id="kpi-pending-sub">Menunggu Penilaian</div>
+        </div>
+        <div class="kpi-card border-gold">
+          <div class="kpi-label">Status Kehadiran / Isu</div>
+          <div class="kpi-value" id="kpi-issues-count">0</div>
+          <div class="kpi-sub" id="kpi-issues-sub">0 TH • 0 Tarik Diri • 0 Gantian</div>
+        </div>
+      </div>
+
+      <!-- Preview 4 Tokoh Terbaik -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin: 30px 0 16px 0;">
+        <h2 style="font-size: 18px; font-weight: 800; color: var(--text-main);">
+          🏅 Anugerah Terbaik Keseluruhan (Anugerah Utama)
+        </h2>
+        <button class="btn-header" id="btn-to-awards" style="color: var(--primary);">
+          Lihat Semua Anugerah ➔
+        </button>
+      </div>
+
+      <div class="tokoh-grid" id="tokoh-champions-grid"></div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 2: DEWAN ANUGERAH & 5 TERBAIK (AWARDS)
+         ========================================================================= -->
+    <section id="tab-awards" class="tab-pane">
+      <div style="margin-bottom: 24px;">
+        <h2 style="font-size: 20px; font-weight: 800; color: var(--text-main);">
+          🏆 Anugerah & 5 Terbaik Pengujian
+        </h2>
+        <p style="font-size: 13px; color: var(--text-muted);">
+          Pengiktirafan rasmi bagi 4 Tokoh Terbaik Keseluruhan dan 5 Peserta Terbaik bagi setiap stesen amali.
+        </p>
+      </div>
+
+      <!-- 1. KAWAD KAKI TOP 5 -->
+      <div style="margin-bottom: 30px;">
+        <h3 style="font-size: 16px; font-weight: 800; color: var(--primary); margin-bottom: 14px;">
+          🎖️ 5 Terbaik Ujian Kawad Kaki (Wajaran 60%)
+        </h3>
+        <div class="station-leaderboard-grid">
+          <div class="leaderboard-card">
+            <div class="leaderboard-title">👦 TKRS Lelaki (Koperal)</div>
+            <div id="lead-kawad-tkrs-l"></div>
+          </div>
+          <div class="leaderboard-card">
+            <div class="leaderboard-title">👧 TKRS Perempuan (Koperal)</div>
+            <div id="lead-kawad-tkrs-p"></div>
+          </div>
+          <div class="leaderboard-card">
+            <div class="leaderboard-title">🧑‍🎓 KRS Lelaki (Sarjan)</div>
+            <div id="lead-kawad-krs-l"></div>
+          </div>
+          <div class="leaderboard-card">
+            <div class="leaderboard-title">👩‍🎓 KRS Perempuan (Sarjan)</div>
+            <div id="lead-kawad-krs-p"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. BANTU MULA TOP 5 -->
+      <div style="margin-bottom: 30px;">
+        <h3 style="font-size: 16px; font-weight: 800; color: var(--primary); margin-bottom: 14px;">
+          🩹 5 Terbaik Ujian Bantu Mula (Wajaran 20%)
+        </h3>
+        <div class="station-leaderboard-grid">
+          <div class="leaderboard-card">
+            <div class="leaderboard-title">👦 TKRS Lelaki (Luka Tapak Tangan)</div>
+            <div id="lead-bm-tkrs-l"></div>
+          </div>
+          <div class="leaderboard-card">
+            <div class="leaderboard-title">👧 TKRS Perempuan (Luka Tapak Tangan)</div>
+            <div id="lead-bm-tkrs-p"></div>
+          </div>
+          <div class="leaderboard-card">
+            <div class="leaderboard-title">🧑‍🎓 KRS Lelaki (Patah Keting/Tibia)</div>
+            <div id="lead-bm-krs-l"></div>
+          </div>
+          <div class="leaderboard-card">
+            <div class="leaderboard-title">👩‍🎓 KRS Perempuan (Patah Keting/Tibia)</div>
+            <div id="lead-bm-krs-p"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. TALI TEMALI TOP 5 -->
+      <div style="margin-bottom: 30px;">
+        <h3 style="font-size: 16px; font-weight: 800; color: var(--primary); margin-bottom: 14px;">
+          🪢 5 Terbaik Ujian Tali Temali / Ikatan (Wajaran 20%)
+        </h3>
+        <div class="station-leaderboard-grid">
+          <div class="leaderboard-card">
+            <div class="leaderboard-title">👦 TKRS Lelaki (4 Ikatan Wajib)</div>
+            <div id="lead-ikatan-tkrs-l"></div>
+          </div>
+          <div class="leaderboard-card">
+            <div class="leaderboard-title">👧 TKRS Perempuan (4 Ikatan Wajib)</div>
+            <div id="lead-ikatan-tkrs-p"></div>
+          </div>
+          <div class="leaderboard-card">
+            <div class="leaderboard-title">🧑‍🎓 KRS Lelaki (4 drpd 5 Ikatan)</div>
+            <div id="lead-ikatan-krs-l"></div>
+          </div>
+          <div class="leaderboard-card">
+            <div class="leaderboard-title">👩‍🎓 KRS Perempuan (4 drpd 5 Ikatan)</div>
+            <div id="lead-ikatan-krs-p"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 3: ANALISIS ELEMEN KAWAD (22 & 15 ELEMEN)
+         ========================================================================= -->
+    <section id="tab-elements" class="tab-pane">
+      <div style="margin-bottom: 24px;">
+        <h2 style="font-size: 20px; font-weight: 800; color: var(--text-main);">
+          📈 Analisis 22 & 15 Elemen Kawad
+        </h2>
+        <p style="font-size: 13px; color: var(--text-muted);">
+          Ketepatan pergerakan mengikut pecahan 22 elemen KRS dan 15 elemen TKRS berdasarkan skema rasmi PPD Johor Bahru.
+        </p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 24px;">
+        <!-- 22 Elemen KRS -->
+        <div class="kpi-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h3 style="font-size: 15px; font-weight: 800; color: var(--primary);">
+              🧑‍🎓 KRS: 22 Elemen Kawad Kaki (Sarjan)
+            </h3>
+            <span class="badge-status badge-lulus">137 Markah Penuh</span>
+          </div>
+          <div id="chart-krs-kawad-elements"></div>
+        </div>
+
+        <!-- 15 Elemen TKRS -->
+        <div class="kpi-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h3 style="font-size: 15px; font-weight: 800; color: var(--primary);">
+              👦 TKRS: 15 Elemen Kawad Kaki (Koperal)
+            </h3>
+            <span class="badge-status badge-lulus">95 Markah Penuh</span>
+          </div>
+          <div id="chart-tkrs-kawad-elements"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 4: PRESTASI SEKOLAH
+         ========================================================================= -->
+    <section id="tab-schools" class="tab-pane">
+      <div style="margin-bottom: 20px;">
+        <h2 style="font-size: 20px; font-weight: 800; color: var(--text-main);">
+          🏫 Prestasi Sekolah
+        </h2>
+        <p style="font-size: 13px; color: var(--text-muted);">
+          Kedudukan sekolah di Daerah Johor Bahru berdasarkan kadar kelulusan pentauliahan dan purata markah keseluruhan.
+        </p>
+      </div>
+
+      <div class="table-container">
+        <div class="table-toolbar">
+          <input type="text" id="school-search-input" class="table-search" placeholder="Cari nama sekolah...">
+        </div>
+        <div style="max-height: 600px; overflow-y: auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Kedudukan</th>
+                <th>Nama Sekolah</th>
+                <th>Bil. Calon</th>
+                <th>Bil. Lulus</th>
+                <th>Kadar Lulus (%)</th>
+                <th>Purata Markah (%)</th>
+                <th>Purata Kawad (%)</th>
+                <th>Tindakan</th>
+              </tr>
+            </thead>
+            <tbody id="school-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 5: DEMOGRAFI JANTINA (GENDER COMPARATIVE)
+         ========================================================================= -->
+    <section id="tab-demographics" class="tab-pane">
+      <div style="margin-bottom: 24px;">
+        <h2 style="font-size: 20px; font-weight: 800; color: var(--text-main);">
+          🚻 Demografi Jantina
+        </h2>
+        <p style="font-size: 13px; color: var(--text-muted);">
+          Perbandingan jurang prestasi dan tahap penguasaan antara kadet Lelaki dan Perempuan.
+        </p>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card border-blue">
+          <div class="kpi-label">👦 Kadet Lelaki (Jumlah)</div>
+          <div class="kpi-value" id="gender-boys-total">0 Calon</div>
+          <div class="kpi-sub" id="gender-boys-pass">0 Lulus</div>
+        </div>
+        <div class="kpi-card" style="border-left: 5px solid var(--girl-color);">
+          <div class="kpi-label">👧 Kadet Perempuan (Jumlah)</div>
+          <div class="kpi-value" id="gender-girls-total">0 Calon</div>
+          <div class="kpi-sub" id="gender-girls-pass">0 Lulus</div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <h3 style="font-size: 15px; font-weight: 800; color: var(--text-main); margin-bottom: 16px;">
+          📊 Purata Skor Mengikut Modul Ujian
+        </h3>
+        <div id="chart-gender-comparison"></div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 6: DIREKTORI CALON & SLIP INDIVIDU (MASTER DIRECTORY)
+         ========================================================================= -->
+    <section id="tab-directory" class="tab-pane">
+      <div style="margin-bottom: 20px;">
+        <h2 style="font-size: 20px; font-weight: 800; color: var(--text-main);">
+          📋 Direktori Calon & Slip
+        </h2>
+        <p style="font-size: 13px; color: var(--text-muted);">
+          Carian segera calon, semakan markah setiap stesen, dan cetakan slip keputusan rasmi.
+        </p>
+      </div>
+
+      <div class="table-container">
+        <div class="table-toolbar">
+          <input type="text" id="dir-search-input" class="table-search" placeholder="Cari No Giliran / Nama / Nama Sekolah...">
+          <select id="dir-unit-filter" class="select-filter">
+            <option value="ALL">Semua Unit</option>
+            <option value="TKRS">TKRS (Koperal)</option>
+            <option value="KRS">KRS (Sarjan)</option>
+          </select>
+          <select id="dir-gender-filter" class="select-filter">
+            <option value="ALL">Semua Jantina</option>
+            <option value="L">Lelaki (L)</option>
+            <option value="P">Perempuan (P)</option>
+          </select>
+          <select id="dir-status-filter" class="select-filter">
+            <option value="ALL">Semua Status</option>
+            <option value="PASS">Lulus Pangkat</option>
+            <option value="FAIL">Belum Capai Tahap</option>
+            <option value="ISSUES">Isu (TH / Tarik / Belum Dinilai)</option>
+          </select>
+        </div>
+
+        <div style="max-height: 600px; overflow-y: auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>No Giliran</th>
+                <th>Nama Peserta</th>
+                <th>Unit</th>
+                <th>Sekolah</th>
+                <th>Kawad (60%)</th>
+                <th>B. Mula (20%)</th>
+                <th>Ikatan (20%)</th>
+                <th>Jumlah (%)</th>
+                <th>Keputusan</th>
+                <th>Tindakan</th>
+              </tr>
+            </thead>
+            <tbody id="candidate-directory-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 7: PORTAL KAWALAN KHAS URUS SETIA (ADMIN GATE)
+         ========================================================================= -->
+    <section id="tab-admin" class="tab-pane">
+      <div style="margin-bottom: 24px;">
+        <div class="badge-status badge-lulus" style="margin-bottom: 8px;">
+          🔓 MOD URUS SETIA DIAKTIFKAN
+        </div>
+        <h2 style="font-size: 20px; font-weight: 800; color: var(--text-main);">
+          ⚙️ Portal Urus Setia & Simulator Pelaras Wajaran Kelulusan
+        </h2>
+        <p style="font-size: 13px; color: var(--text-muted);">
+          Modul eksklusif untuk Urus Setia PPD Johor Bahru membuat pelarasan wajaran (10% - 100%) dan ambang lulus bagi Kawad, Bantu Mula + Ikatan, dan Keseluruhan.
+        </p>
+      </div>
+
+      <div class="kpi-card" style="margin-bottom: 24px;">
+        <h3 style="font-size: 15px; font-weight: 800; color: var(--primary); margin-bottom: 12px;">
+          ⚡ Pratetap Cepat (1-Click Presets):
+        </h3>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;">
+          <button class="btn-header" id="preset-standard" style="color:var(--text-main);">🟢 Standard Rasmi (Kawad 60% / BM+Ikatan 40% | 70/50/70)</button>
+          <button class="btn-header" id="preset-sederhana" style="color:var(--text-main);">🟡 Sederhana (Kawad 60% / BM+Ikatan 40% | 65/50/65)</button>
+          <button class="btn-header" id="preset-fleksibel" style="color:var(--text-main);">🟠 Seimbang (Kawad 50% / BM+Ikatan 50% | 60/40/60)</button>
+          <button class="btn-header" id="preset-minimum" style="color:var(--text-main);">🔵 Minimum (Kawad 50% / BM+Ikatan 50% | 50/30/50)</button>
+        </div>
+
+        <!-- 1. WAJARAN KAWAD vs BM+IKATAN (10% - 100%) -->
+        <div style="background:#f8fafc; border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px; margin-bottom:20px;">
+          <div style="font-size:12px; font-weight:800; color:var(--primary); text-transform:uppercase; margin-bottom:12px; display:flex; justify-content:space-between;">
+            <span>1️⃣ Pelaras Wajaran Pengujian (%)</span>
+            <span id="admin-weight-badge" style="background:#dcfce7; color:#166534; padding:2px 8px; border-radius:10px;">Jumlah: 100%</span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+            <div>
+              <label style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Wajaran Kawad Kaki:</label>
+              <select id="admin-waj-kawad" class="select-filter" style="width:100%; margin-top:4px;">
+                <option value="1.00">100%</option>
+                <option value="0.90">90%</option>
+                <option value="0.80">80%</option>
+                <option value="0.70">70%</option>
+                <option value="0.60" selected>60% (Standard Rasmi)</option>
+                <option value="0.50">50% (Seimbang)</option>
+                <option value="0.40">40%</option>
+                <option value="0.30">30%</option>
+                <option value="0.20">20%</option>
+                <option value="0.10">10%</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Wajaran Bantu Mula + Ikatan:</label>
+              <select id="admin-waj-bm-ikatan" class="select-filter" style="width:100%; margin-top:4px;">
+                <option value="1.00">100%</option>
+                <option value="0.90">90%</option>
+                <option value="0.80">80%</option>
+                <option value="0.70">70%</option>
+                <option value="0.60">60%</option>
+                <option value="0.50">50% (Seimbang)</option>
+                <option value="0.40" selected>40% (Standard Rasmi: BM 20% + Ikatan 20%)</option>
+                <option value="0.30">30%</option>
+                <option value="0.20">20%</option>
+                <option value="0.10">10%</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. AMBANG LULUS (10% - 100%) -->
+        <div style="background:#f8fafc; border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px; margin-bottom:20px;">
+          <div style="font-size:12px; font-weight:800; color:var(--primary); text-transform:uppercase; margin-bottom:12px;">
+            2️⃣ Pelaras Ambang Kelulusan Pangkat (%)
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+            <div>
+              <label style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Ambang Kawad Kaki:</label>
+              <select id="sim-kawad" class="select-filter" style="width:100%; margin-top:4px;">
+                <option value="1.00">100%</option>
+                <option value="0.90">90%</option>
+                <option value="0.80">80%</option>
+                <option value="0.75">75% (Ketat)</option>
+                <option value="0.70" selected>70% (Standard PPD)</option>
+                <option value="0.65">65% (Sederhana)</option>
+                <option value="0.60">60% (Fleksibel)</option>
+                <option value="0.55">55%</option>
+                <option value="0.50">50% (Minimum)</option>
+                <option value="0.40">40%</option>
+                <option value="0.30">30%</option>
+                <option value="0.20">20%</option>
+                <option value="0.10">10%</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Ambang Bantu Mula + Ikatan:</label>
+              <select id="sim-ikatan" class="select-filter" style="width:100%; margin-top:4px;">
+                <option value="1.00">100%</option>
+                <option value="0.90">90%</option>
+                <option value="0.80">80%</option>
+                <option value="0.70">70%</option>
+                <option value="0.60">60% (Ketat)</option>
+                <option value="0.50" selected>50% (Standard PPD)</option>
+                <option value="0.45">45%</option>
+                <option value="0.40">40% (Fleksibel)</option>
+                <option value="0.35">35%</option>
+                <option value="0.30">30% (Minimum)</option>
+                <option value="0.20">20%</option>
+                <option value="0.10">10%</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Ambang Keseluruhan:</label>
+              <select id="sim-overall" class="select-filter" style="width:100%; margin-top:4px;">
+                <option value="1.00">100%</option>
+                <option value="0.90">90%</option>
+                <option value="0.80">80%</option>
+                <option value="0.75">75% (Ketat)</option>
+                <option value="0.70" selected>70% (Standard PPD)</option>
+                <option value="0.65">65% (Sederhana)</option>
+                <option value="0.60">60% (Fleksibel)</option>
+                <option value="0.55">55%</option>
+                <option value="0.50">50% (Minimum)</option>
+                <option value="0.40">40%</option>
+                <option value="0.30">30%</option>
+                <option value="0.20">20%</option>
+                <option value="0.10">10%</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div id="admin-sim-feedback" style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: var(--radius-sm); padding: 16px; margin-bottom: 20px; font-size: 13px;">
+          Tukar wajaran dan ambang di atas untuk melihat simulasi calon yang layak ditauliahkan.
+        </div>
+
+        <button class="btn-header btn-admin-gate" id="btn-apply-admin-thresholds" style="width: 100%; justify-content: center; padding: 14px; font-size: 14px;">
+          💾 Guna Pakai Wajaran Baharu pada Analisis Sekarang
+        </button>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- =========================================================================
+       MODAL 1: SLIP KEPUTUSAN CALON (DIGITAL DOSSIER)
+       ========================================================================= -->
+  <div id="modal-slip-backdrop" class="modal-backdrop">
+    <div class="modal-box modal-box-lg">
+      <div class="modal-header">
+        <div>
+          <div class="header-badge" style="background:#eff6ff; color:var(--primary); border:1px solid #bfdbfe;">
+            SLIP KEPUTUSAN RASMI PENTAULIAHAN
+          </div>
+          <h2 class="modal-title" id="slip-nama">-</h2>
+          <p style="font-size: 12px; color: var(--text-muted);" id="slip-unit-pangkat">-</p>
+        </div>
+        <button class="btn-close-modal" id="btn-close-slip-modal">✕</button>
+      </div>
+
+      <div style="margin-bottom: 20px; font-size: 13px;">
+        <p><strong>No Giliran:</strong> <span id="slip-no-giliran">-</span></p>
+        <p><strong>Sekolah:</strong> <span id="slip-sekolah">-</span></p>
+      </div>
+
+      <div class="tokoh-scores" style="margin-bottom: 20px;">
+        <div class="tokoh-score-item">
+          <div class="sc-lbl">Kawad Kaki (60%)</div>
+          <div class="sc-val" id="slip-score-kawad">0%</div>
+        </div>
+        <div class="tokoh-score-item">
+          <div class="sc-lbl">Bantu Mula (20%)</div>
+          <div class="sc-val" id="slip-score-bm">0%</div>
+        </div>
+        <div class="tokoh-score-item">
+          <div class="sc-lbl">Ikatan (20%)</div>
+          <div class="sc-val" id="slip-score-ikatan">0%</div>
+        </div>
+        <div class="tokoh-score-item sc-total">
+          <div class="sc-lbl">Jumlah (%)</div>
+          <div class="sc-val" id="slip-score-overall">0%</div>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-bottom: 24px;">
+        <span id="slip-status-badge" class="badge-status badge-lulus" style="font-size: 13px; padding: 8px 16px;">
+          -
+        </span>
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <button class="btn-header btn-admin-gate" id="btn-print-slip" style="flex:1; justify-content:center;">
+          🖨️ Cetak Slip / Sijil
+        </button>
+        <button class="btn-header" id="btn-close-slip" style="color:var(--text-main);">
+          Tutup
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 2: PIN / PASSWORD GATE KESELAMATAN URUS SETIA (adminseketejb)
+       ========================================================================= -->
+  <div id="modal-pin-backdrop" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 class="modal-title">🔒 Log Masuk Urus Setia</h2>
+        <button class="btn-close-modal" id="btn-close-pin-modal">✕</button>
+      </div>
+
+      <p style="font-size: 13px; color: var(--text-muted);">
+        Sila masukkan Kata Laluan / PIN Keselamatan Urus Setia untuk membuka fungsi pelaras wajaran & kemas kini:
+      </p>
+
+      <div class="password-input-wrap">
+        <input type="password" id="admin-pin-field" class="password-field" placeholder="Masukkan kata laluan urus setia...">
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <button class="btn-header btn-admin-gate" id="btn-submit-pin" style="flex:1; justify-content:center;">
+          Buka Akses Urus Setia
+        </button>
+        <button class="btn-header" id="btn-cancel-pin" style="color:var(--text-main);">
+          Batal
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/analytics.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,1232 @@
+<? if (page === 'Dashboard') { ?>
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-dark: #0f172a;
+      --primary-light: #3b82f6;
+      --accent: #10b981;
+      --accent-gold: #f59e0b;
+      --danger: #ef4444;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 12px;
+      --shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    /* Header Korporat */
+    .header-card {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 60%, #1e40af 100%);
+      color: white;
+      padding: 24px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header-card::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 200px;
+      height: 200px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .badge-pentauliahan {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .header-title {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1.3;
+    }
+
+    .header-subtitle {
+      font-size: 12px;
+      color: #cbd5e1;
+      margin-top: 4px;
+    }
+
+    /* Grid Statistik */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--primary-dark);
+      margin-top: 4px;
+    }
+
+    .stat-sub {
+      font-size: 10px;
+      color: var(--accent);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    /* Bahagian Tindakan & Kawalan */
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .action-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .btn-action {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 14px 18px;
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text-main);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+
+    .btn-action:hover {
+      border-color: var(--primary-light);
+      background: #eff6ff;
+      transform: translateX(3px);
+    }
+
+    .btn-action.btn-primary {
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+      color: white;
+      border: none;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    }
+
+    .btn-action.btn-primary:hover {
+      background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%);
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+    }
+
+    .btn-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-icon {
+      font-size: 18px;
+    }
+
+    .btn-desc {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .btn-primary .btn-desc {
+      color: #dbeafe;
+    }
+
+    /* Status Bar & Spinner */
+    #status-box {
+      display: none;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      font-size: 12px;
+      font-weight: 600;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 20px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header-card">
+    <div class="badge-pentauliahan">
+      🏛️ Urus Setia KRS & TKRS Daerah JB
+    </div>
+    <h1 class="header-title">Pusat Kawalan & Analisis Pentauliahan 2026</h1>
+    <p class="header-subtitle">Pengurusan Ujian Kenaikan Pangkat Sarjan (KRS) & Koperal (TKRS)</p>
+  </div>
+
+  <!-- Statistik Utama -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Total Peserta</div>
+      <div class="stat-value" id="stat-total">305</div>
+      <div class="stat-sub">60 Buah Sekolah</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">KRS (Menengah)</div>
+      <div class="stat-value" id="stat-krs">144</div>
+      <div class="stat-sub">Pangkat Sarjan</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">TKRS (Rendah)</div>
+      <div class="stat-value" id="stat-tkrs">161</div>
+      <div class="stat-sub">Pangkat Koperal</div>
+    </div>
+  </div>
+
+  <!-- Tindakan Utama -->
+  <div class="section-title">⚡ Tindakan & Automasi Sistem</div>
+  
+  <div class="action-grid">
+    <button class="btn-action btn-primary" onclick="runAutoRepair(this)">
+      <div class="btn-content">
+        <span class="btn-icon">⚡</span>
+        <div>
+          <div>Baiki Semua Formula VLOOKUP & Markah</div>
+          <div class="btn-desc">Audit & betulkan formula ANALISIS_TKRS & ANALISIS_KRS</div>
+        </div>
+      </div>
+      <span>➔</span>
+    </button>
+
+    <button class="btn-action" onclick="runRecalculate(this)">
+      <div class="btn-content">
+        <span class="btn-icon">🔄</span>
+        <div>
+          <div>Segerakkan Markah Penguji Masa Nyata</div>
+          <div class="btn-desc">Kemas kini wajaran markah & status kelulusan (LLL/GGG)</div>
+        </div>
+      </div>
+      <span>➔</span>
+    </button>
+
+    <button class="btn-action" onclick="runInstallTrigger(this)">
+      <div class="btn-content">
+        <span class="btn-icon">🤖</span>
+        <div>
+          <div>Pasang Automasi Trigger (Auto-Sync)</div>
+          <div class="btn-desc">Auto-kemas kini setiap kali borang AppSheet dihantar</div>
+        </div>
+      </div>
+      <span>➔</span>
+    </button>
+  </div>
+
+  <!-- Status Notification -->
+  <div id="status-box">
+    <span id="status-msg">Proses sedang dijalankan...</span>
+  </div>
+
+  <div class="footer">
+    Sistem Pengurusan Pentauliahan Kadet Remaja Sekolah JB © 2026
+  </div>
+
+  <script>
+    function showStatus(msg, isSuccess) {
+      var box = document.getElementById('status-box');
+      box.style.display = 'flex';
+      box.style.background = isSuccess ? '#f0fdf4' : '#fef2f2';
+      box.style.borderColor = isSuccess ? '#bbf7d0' : '#fecaca';
+      box.style.color = isSuccess ? '#166534' : '#991b1b';
+      document.getElementById('status-msg').innerText = msg;
+    }
+
+    function runAutoRepair(btn) {
+      var originalHtml = btn.innerHTML;
+      btn.innerHTML = '<div class="btn-content"><span class="spinner"></span> <div>Sedang membaiki formula...</div></div>';
+      btn.disabled = true;
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          btn.innerHTML = originalHtml;
+          btn.disabled = false;
+          showStatus("✅ " + res, true);
+        })
+        .withFailureHandler(function(err) {
+          btn.innerHTML = originalHtml;
+          btn.disabled = false;
+          showStatus("❌ Ralat: " + err.message, false);
+        })
+        .repairAndOptimizeSpreadsheet();
+    }
+
+    function runRecalculate(btn) {
+      var originalHtml = btn.innerHTML;
+      btn.innerHTML = '<div class="btn-content"><span class="spinner"></span> <div>Sedang menyegerakkan data...</div></div>';
+      btn.disabled = true;
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          btn.innerHTML = originalHtml;
+          btn.disabled = false;
+          showStatus("✅ Pengiraan markah & status berjaya disegerakkan!", true);
+        })
+        .withFailureHandler(function(err) {
+          btn.innerHTML = originalHtml;
+          btn.disabled = false;
+          showStatus("❌ Ralat: " + err.message, false);
+        })
+        .repairAndOptimizeSpreadsheet();
+    }
+
+    function runInstallTrigger(btn) {
+      var originalHtml = btn.innerHTML;
+      btn.innerHTML = '<div class="btn-content"><span class="spinner"></span> <div>Memasang automasi...</div></div>';
+      btn.disabled = true;
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          btn.innerHTML = originalHtml;
+          btn.disabled = false;
+          showStatus("✅ Trigger automasi masa nyata telah diaktifkan!", true);
+        })
+        .withFailureHandler(function(err) {
+          btn.innerHTML = originalHtml;
+          btn.disabled = false;
+          showStatus("❌ Ralat: " + err.message, false);
+        })
+        .setupAutoTriggers();
+    }
+  </script>
+</body>
+</html>
+
+<? } ?>
+
+<? if (page === 'ModalAutomasi') { ?>
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-light: #2563eb;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background-color: var(--bg); color: var(--text-main); padding: 20px; }
+    
+    .header-card {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      color: white; padding: 18px 22px; border-radius: var(--radius); margin-bottom: 16px;
+    }
+    .header-title { font-size: 17px; font-weight: 800; }
+    .header-sub { font-size: 12px; color: #cbd5e1; margin-top: 3px; }
+
+    .status-card {
+      background: white; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      padding: 16px; margin-bottom: 16px; font-size: 12.5px;
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+      color: white; border: none; padding: 12px 20px; border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 700; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+
+    #status-toast {
+      display: none; padding: 10px 14px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600;
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header-card">
+    <div class="header-title">🤖 Pusat Automasi & Trigger Masa Nyata</div>
+    <div class="header-sub">Mengaktifkan automasi onChange supaya setiap markah baharu dari AppSheet dikira serta-merta</div>
+  </div>
+
+  <div id="status-toast"></div>
+
+  <div class="status-card">
+    <div style="font-size:12px; font-weight:800; color:var(--primary); margin-bottom:10px; text-transform:uppercase;">
+      📡 Status Enjin Automasi Semasa:
+    </div>
+    <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px dashed var(--border);">
+      <span>Status Trigger Google Sheet:</span>
+      <span id="trig-status" style="font-weight:700; color:#10b981;">Sedang memeriksa...</span>
+    </div>
+    <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px dashed var(--border);">
+      <span>Jenis Pengaktif (Event Type):</span>
+      <span style="font-weight:700;">ON_CHANGE (Setiap kali AppSheet hantar data)</span>
+    </div>
+    <div style="display:flex; justify-content:space-between; padding:8px 0;">
+      <span>Sasaran Fungsi:</span>
+      <span style="font-weight:700; color:var(--primary-light);">repairAndOptimizeSpreadsheet()</span>
+    </div>
+  </div>
+
+  <button class="btn-submit" id="btn-install-trig" onclick="installTrigger()">
+    <span>🤖</span> Pasang / Pasang Semula Automasi Masa Nyata Sekarang
+  </button>
+
+  <script>
+    window.onload = function() {
+      google.script.run
+        .withSuccessHandler(function(res) {
+          var el = document.getElementById('trig-status');
+          if (res.installed) {
+            el.innerHTML = '<span style="color:#10b981;">🟢 AKTIF (' + res.count + ' Trigger Beroperasi)</span>';
+          } else {
+            el.innerHTML = '<span style="color:#f59e0b;">🟠 BELUM DIPASANG</span>';
+          }
+        })
+        .getTriggerStatus();
+    };
+
+    function showToast(msg, isSuccess) {
+      var t = document.getElementById('status-toast');
+      t.style.display = 'block';
+      t.style.background = isSuccess ? '#f0fdf4' : '#fef2f2';
+      t.style.border = isSuccess ? '1px solid #bbf7d0' : '1px solid #fecaca';
+      t.style.color = isSuccess ? '#166534' : '#991b1b';
+      t.innerHTML = (isSuccess ? '✅ ' : '❌ ') + msg;
+      setTimeout(function() { t.style.display = 'none'; }, 6000);
+    }
+
+    function installTrigger() {
+      var btn = document.getElementById('btn-install-trig');
+      var orig = btn.innerHTML;
+      btn.innerHTML = 'Sedang memasang automasi...';
+      btn.disabled = true;
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          btn.innerHTML = orig;
+          btn.disabled = false;
+          showToast(res, true);
+          document.getElementById('trig-status').innerHTML = '<span style="color:#10b981;">🟢 AKTIF (Trigger Beroperasi)</span>';
+        })
+        .withFailureHandler(function(err) {
+          btn.innerHTML = orig;
+          btn.disabled = false;
+          showToast("Ralat: " + err.message, false);
+        })
+        .setupAutoTriggers();
+    }
+  </script>
+</body>
+</html>
+
+<? } ?>
+
+<? if (page === 'ModalBaikiFormula') { ?>
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-light: #2563eb;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background-color: var(--bg); color: var(--text-main); padding: 20px; }
+    
+    .header-card {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      color: white; padding: 18px 22px; border-radius: var(--radius); margin-bottom: 16px;
+    }
+    .header-title { font-size: 17px; font-weight: 800; }
+    .header-sub { font-size: 12px; color: #cbd5e1; margin-top: 3px; }
+
+    .check-box {
+      background: white; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      padding: 16px; margin-bottom: 16px; font-size: 12.5px;
+    }
+
+    .check-item {
+      display: flex; align-items: center; justify-content: space-between; padding: 8px 0;
+      border-bottom: 1px dashed var(--border);
+    }
+    .check-item:last-child { border-bottom: none; }
+
+    .btn-submit {
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+      color: white; border: none; padding: 12px 20px; border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 700; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+
+    #status-toast {
+      display: none; padding: 10px 14px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600;
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header-card">
+    <div class="header-title">⚡ Diagnosis & Baiki Formula VLOOKUP</div>
+    <div class="header-sub">Menyemak, membetulkan sambungan VLOOKUP, dan mengira semula semua lajur markah secara automatik</div>
+  </div>
+
+  <div id="status-toast"></div>
+
+  <div class="check-box">
+    <div style="font-size:12px; font-weight:800; color:var(--primary); margin-bottom:8px; text-transform:uppercase;">
+      📋 Senarai Pemeriksaan Formula:
+    </div>
+    <div class="check-item">
+      <span>1. Helaian ANALISIS_TKRS (Lajur G, H, I, J, K)</span>
+      <span style="color:#10b981; font-weight:700;">✓ Sedia Diselaras</span>
+    </div>
+    <div class="check-item">
+      <span>2. Helaian ANALISIS_KRS (Lajur G, H, I, J, K)</span>
+      <span style="color:#10b981; font-weight:700;">✓ Sedia Diselaras</span>
+    </div>
+    <div class="check-item">
+      <span>3. Penyesuaian Kolum VLOOKUP Kawad, Bantu Mula & Ikatan</span>
+      <span style="color:#10b981; font-weight:700;">✓ Sedia Dioptimum</span>
+    </div>
+    <div class="check-item">
+      <span>4. Format Peratusan Automatik (0.00%)</span>
+      <span style="color:#10b981; font-weight:700;">✓ Sedia Diguna Pakai</span>
+    </div>
+  </div>
+
+  <button class="btn-submit" id="btn-repair" onclick="runRepair()">
+    <span>⚡</span> Jalankan Diagnosis & Baiki Semua Formula Sekarang
+  </button>
+
+  <script>
+    function showToast(msg, isSuccess) {
+      var t = document.getElementById('status-toast');
+      t.style.display = 'block';
+      t.style.background = isSuccess ? '#f0fdf4' : '#fef2f2';
+      t.style.border = isSuccess ? '1px solid #bbf7d0' : '1px solid #fecaca';
+      t.style.color = isSuccess ? '#166534' : '#991b1b';
+      t.innerHTML = (isSuccess ? '✅ ' : '❌ ') + msg;
+      setTimeout(function() { t.style.display = 'none'; }, 6000);
+    }
+
+    function runRepair() {
+      var btn = document.getElementById('btn-repair');
+      var orig = btn.innerHTML;
+      btn.innerHTML = 'Sedang membaiki formula di seluruh helaian...';
+      btn.disabled = true;
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          btn.innerHTML = orig;
+          btn.disabled = false;
+          showToast(res, true);
+        })
+        .withFailureHandler(function(err) {
+          btn.innerHTML = orig;
+          btn.disabled = false;
+          showToast("Ralat: " + err.message, false);
+        })
+        .repairAndOptimizeSpreadsheet();
+    }
+  </script>
+</body>
+</html>
+
+<? } ?>
+
+<? if (page === 'ModalKehadiran') { ?>
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-light: #2563eb;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background-color: var(--bg); color: var(--text-main); padding: 18px; }
+    
+    .header-card {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      color: white;
+      padding: 16px 20px;
+      border-radius: var(--radius);
+      margin-bottom: 14px;
+    }
+    .header-title { font-size: 16px; font-weight: 800; }
+    .header-sub { font-size: 11.5px; color: #cbd5e1; margin-top: 2px; }
+
+    .search-box { display: flex; gap: 8px; margin-bottom: 12px; }
+    .input-text {
+      flex: 1; padding: 8px 12px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      font-size: 12px; outline: none; background: white;
+    }
+    .input-text:focus { border-color: var(--primary-light); }
+    .select-status { padding: 8px 12px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 12px; background: white; }
+
+    .table-container {
+      max-height: 280px; overflow-y: auto; border: 1px solid var(--border); border-radius: var(--radius-sm);
+      background: white; margin-bottom: 14px;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 11.5px; text-align: left; }
+    th { background: #f1f5f9; color: var(--text-muted); font-weight: 700; padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 10.5px; text-transform: uppercase; }
+    td { padding: 8px 10px; border-bottom: 1px solid var(--border); }
+    tr:hover { background: #f8fafc; }
+
+    .badge { display: inline-block; padding: 2px 6px; border-radius: 10px; font-size: 10px; font-weight: 700; }
+    .badge-pass { background: #dcfce7; color: #166534; }
+    .badge-fail { background: #fee2e2; color: #991b1b; }
+    .badge-warn { background: #fef3c7; color: #92400e; }
+    .badge-gray { background: #f1f5f9; color: #475569; }
+
+    .edit-box {
+      background: white; border: 1.5px solid var(--border); border-radius: var(--radius); padding: 14px;
+      display: none; animation: fadeIn 0.2s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 10px; font-size: 12px; }
+    .form-label { font-weight: 700; color: var(--text-muted); font-size: 11px; margin-bottom: 3px; display: block; }
+
+    .btn-submit {
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+      color: white; border: none; padding: 9px 16px; border-radius: var(--radius-sm);
+      font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-cancel {
+      background: white; border: 1px solid var(--border); padding: 9px 14px; border-radius: var(--radius-sm);
+      font-size: 12px; font-weight: 600; cursor: pointer;
+    }
+
+    #status-toast {
+      display: none; padding: 8px 12px; border-radius: var(--radius-sm); font-size: 11.5px; font-weight: 600;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header-card">
+    <div class="header-title">👥 Pengesanan Kehadiran & Pertukaran Peserta</div>
+    <div class="header-sub">Kemaskini status Hadir, Tidak Hadir (TH), Tarik Diri, dan Masukkan Nama Calon Gantian</div>
+  </div>
+
+  <div id="status-toast"></div>
+
+  <div class="search-box">
+    <input type="text" id="search-input" class="input-text" placeholder="Cari No Giliran / Nama Calon / Sekolah..." onkeyup="filterList()">
+    <select id="filter-unit" class="select-status" onchange="filterList()">
+      <option value="ALL">Semua Unit</option>
+      <option value="TKRS">TKRS (Koperal)</option>
+      <option value="KRS">KRS (Sarjan)</option>
+    </select>
+  </div>
+
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>No Giliran</th>
+          <th>Nama Calon</th>
+          <th>Unit</th>
+          <th>Sekolah</th>
+          <th>Status</th>
+          <th>Catatan</th>
+          <th>Tindakan</th>
+        </tr>
+      </thead>
+      <tbody id="candidate-list-body">
+        <tr><td colspan="7" style="text-align:center; padding:15px;">Memuatkan data calon...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Panel Edit Status -->
+  <div id="edit-panel" class="edit-box">
+    <div style="font-size:13px; font-weight:800; color:var(--primary); margin-bottom:10px;">
+      📝 Kemaskini Rekod Calon: <span id="edit-cand-title" style="color:var(--text-main);">-</span>
+    </div>
+    
+    <input type="hidden" id="edit-no-giliran">
+
+    <div class="form-grid">
+      <div>
+        <label class="form-label">Tindakan / Status Kehadiran:</label>
+        <select id="edit-status" class="select-status" style="width:100%;" onchange="checkReplacement()">
+          <option value="HADIR">✅ Hadir & Dinilai</option>
+          <option value="TIDAK HADIR">❌ Tidak Hadir (TH)</option>
+          <option value="TARIK DIRI">🚫 Tarik Diri</option>
+          <option value="TUKAR PESERTA">🔄 Tukar Peserta (Gantian)</option>
+        </select>
+      </div>
+
+      <div id="gantian-field" style="display:none;">
+        <label class="form-label">Nama Calon Baharu (Gantian):</label>
+        <input type="text" id="edit-new-name" class="input-text" placeholder="Nama penuh calon pengganti...">
+      </div>
+    </div>
+
+    <div style="margin-bottom:12px;">
+      <label class="form-label">Catatan Tambahan Urus Setia:</label>
+      <input type="text" id="edit-catatan" class="input-text" placeholder="Contoh: Pengesahan guru pengiring / surat MC...">
+    </div>
+
+    <div style="display:flex; gap:8px;">
+      <button class="btn-submit" id="btn-save-edit" onclick="saveCandidateStatus()">
+        <span>💾</span> Simpan ke Google Sheet
+      </button>
+      <button class="btn-cancel" onclick="closeEditPanel()">Batal</button>
+    </div>
+  </div>
+
+  <script>
+    var candidateData = [];
+
+    window.onload = function() {
+      loadData();
+    };
+
+    function showToast(msg, isSuccess) {
+      var t = document.getElementById('status-toast');
+      t.style.display = 'block';
+      t.style.background = isSuccess ? '#f0fdf4' : '#fef2f2';
+      t.style.border = isSuccess ? '1px solid #bbf7d0' : '1px solid #fecaca';
+      t.style.color = isSuccess ? '#166534' : '#991b1b';
+      t.innerHTML = (isSuccess ? '✅ ' : '❌ ') + msg;
+      setTimeout(function() { t.style.display = 'none'; }, 5000);
+    }
+
+    function loadData() {
+      google.script.run
+        .withSuccessHandler(function(data) {
+          candidateData = data.candidates || [];
+          renderTable(candidateData);
+        })
+        .withFailureHandler(function(err) {
+          showToast("Ralat: " + err.message, false);
+        })
+        .getDashboardData();
+    }
+
+    function renderTable(list) {
+      var tbody = document.getElementById('candidate-list-body');
+      if (!list || list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:15px;">Tiada rekod calon dijumpai.</td></tr>';
+        return;
+      }
+
+      var html = '';
+      list.forEach(function(c) {
+        var statusBadge = c.isPass ? '<span class="badge badge-pass">LULUS</span>' : 
+          (c.isAbsent ? '<span class="badge badge-fail">TH</span>' : 
+          (c.isTarikDiri ? '<span class="badge badge-fail">TARIK DIRI</span>' : 
+          (c.isEvaluated ? '<span class="badge badge-warn">BELUM CAPAI</span>' : '<span class="badge badge-gray">BELUM DINILAI</span>')));
+
+        var noteBadge = c.catatan ? '<span class="badge badge-warn">' + c.catatan + '</span>' : '-';
+
+        html += '<tr>' +
+          '<td><strong>' + c.noGiliran + '</strong></td>' +
+          '<td>' + c.nama + '</td>' +
+          '<td>' + c.unit + ' (' + c.jantina + ')</td>' +
+          '<td>' + c.sekolah + '</td>' +
+          '<td>' + statusBadge + '</td>' +
+          '<td>' + noteBadge + '</td>' +
+          '<td><button style="padding:3px 8px; border:1px solid #cbd5e1; border-radius:4px; background:#fff; cursor:pointer; font-size:10.5px; font-weight:700;" onclick="openEdit(\'' + c.noGiliran + '\', \'' + escapeQuotes(c.nama) + '\', \'' + escapeQuotes(c.catatan) + '\')">⚙️ Kemaskini</button></td>' +
+        '</tr>';
+      });
+      tbody.innerHTML = html;
+    }
+
+    function escapeQuotes(str) { return String(str || '').replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
+
+    function filterList() {
+      var q = document.getElementById('search-input').value.toLowerCase().trim();
+      var unit = document.getElementById('filter-unit').value;
+
+      var filtered = candidateData.filter(function(c) {
+        var matchQ = !q || c.noGiliran.toLowerCase().indexOf(q) !== -1 || c.nama.toLowerCase().indexOf(q) !== -1 || c.sekolah.toLowerCase().indexOf(q) !== -1;
+        var matchUnit = unit === 'ALL' || c.unit === unit;
+        return matchQ && matchUnit;
+      });
+      renderTable(filtered);
+    }
+
+    function openEdit(noGiliran, nama, catatan) {
+      document.getElementById('edit-no-giliran').value = noGiliran;
+      document.getElementById('edit-cand-title').innerText = noGiliran + ' - ' + nama;
+      document.getElementById('edit-catatan').value = catatan;
+      document.getElementById('edit-new-name').value = '';
+
+      var isTukar = catatan.indexOf('GANTIAN') !== -1;
+      var isTH = catatan.indexOf('TH') !== -1 || catatan.indexOf('TIDAK HADIR') !== -1;
+      var isTarik = catatan.indexOf('TARIK DIRI') !== -1;
+
+      if (isTukar) document.getElementById('edit-status').value = 'TUKAR PESERTA';
+      else if (isTH) document.getElementById('edit-status').value = 'TIDAK HADIR';
+      else if (isTarik) document.getElementById('edit-status').value = 'TARIK DIRI';
+      else document.getElementById('edit-status').value = 'HADIR';
+
+      checkReplacement();
+      document.getElementById('edit-panel').style.display = 'block';
+    }
+
+    function closeEditPanel() {
+      document.getElementById('edit-panel').style.display = 'none';
+    }
+
+    function checkReplacement() {
+      var st = document.getElementById('edit-status').value;
+      document.getElementById('gantian-field').style.display = (st === 'TUKAR PESERTA') ? 'block' : 'none';
+    }
+
+    function saveCandidateStatus() {
+      var btn = document.getElementById('btn-save-edit');
+      var orig = btn.innerHTML;
+      btn.innerHTML = 'Menyimpan...';
+      btn.disabled = true;
+
+      var payload = {
+        noGiliran: document.getElementById('edit-no-giliran').value,
+        newStatus: document.getElementById('edit-status').value,
+        newName: document.getElementById('edit-new-name').value,
+        catatan: document.getElementById('edit-catatan').value
+      };
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          btn.innerHTML = orig;
+          btn.disabled = false;
+          closeEditPanel();
+          showToast(res, true);
+          loadData();
+        })
+        .withFailureHandler(function(err) {
+          btn.innerHTML = orig;
+          btn.disabled = false;
+          showToast("Ralat: " + err.message, false);
+        })
+        .updateCandidateStatusRecord(payload);
+    }
+  </script>
+</body>
+</html>
+
+<? } ?>
+
+<? if (page === 'ModalMengenai') { ?>
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-light: #2563eb;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background-color: var(--bg); color: var(--text-main); padding: 20px; }
+    
+    .header-card {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      color: white; padding: 18px 22px; border-radius: var(--radius); margin-bottom: 16px;
+    }
+    .header-title { font-size: 17px; font-weight: 800; }
+    .header-sub { font-size: 12px; color: #cbd5e1; margin-top: 3px; }
+
+    .info-card {
+      background: white; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+      padding: 16px; margin-bottom: 14px; font-size: 12.5px;
+    }
+
+    .info-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed var(--border); }
+    .info-row:last-child { border-bottom: none; }
+  </style>
+</head>
+<body>
+
+  <div class="header-card">
+    <div class="header-title">ℹ️ Mengenai Sistem & Skema PPD Johor Bahru</div>
+    <div class="header-sub">Surat Rasmi PPDJB bertarikh 18 Ogos 2026 • Rujukan: PPDJHB.SPM.PBM.600-3/1/3 Jilid. 2 (58)</div>
+  </div>
+
+  <div class="info-card">
+    <div style="font-size:12px; font-weight:800; color:var(--primary); margin-bottom:8px; text-transform:uppercase;">
+      📅 Maklumat Pengujian:
+    </div>
+    <div class="info-row">
+      <span>Tarikh Ujian:</span>
+      <strong>22 Ogos 2026 (Sabtu)</strong>
+    </div>
+    <div class="info-row">
+      <span>Lokasi Pusat Ujian:</span>
+      <strong>SK Tasek Utara, Johor Bahru</strong>
+    </div>
+    <div class="info-row">
+      <span>Kategori Diuji:</span>
+      <strong>Sarjan KRS (Menengah) & Koperal TKRS (Rendah)</strong>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <div style="font-size:12px; font-weight:800; color:var(--primary); margin-bottom:8px; text-transform:uppercase;">
+      ⚖️ Wajaran & Syarat Kelulusan Rasmi PPDJB:
+    </div>
+    <div class="info-row">
+      <span>1. Ujian Kawad Kaki (Wajaran 60%):</span>
+      <strong style="color:#2563eb;">Ambang Lulus ≥ 70%</strong>
+    </div>
+    <div class="info-row">
+      <span>2. Ujian Bantu Mula (Wajaran 20%):</span>
+      <strong>Patah Keting (KRS) / Luka Tapak Tangan (TKRS)</strong>
+    </div>
+    <div class="info-row">
+      <span>3. Ujian Tali Temali (Wajaran 20%):</span>
+      <strong style="color:#2563eb;">Ambang Lulus ≥ 50%</strong>
+    </div>
+    <div class="info-row" style="background:#ecfdf5; padding:8px; border-radius:4px; margin-top:4px;">
+      <span>🏆 Jumlah Markah Keseluruhan:</span>
+      <strong style="color:#166534;">Ambang Lulus Pangkat ≥ 70%</strong>
+    </div>
+  </div>
+
+  <div style="text-align:center; font-size:11px; color:var(--text-muted); margin-top:14px;">
+    Dibina khas untuk Urus Setia & Panel Hakim Kadet Remaja Sekolah Daerah Johor Bahru © 2026
+  </div>
+
+</body>
+</html>
+
+<? } ?>
+
+<? if (page === 'ModalWajaran') { ?>
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-light: #2563eb;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background-color: var(--bg); color: var(--text-main); padding: 20px; }
+    
+    .header-card {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      color: white; padding: 18px 22px; border-radius: var(--radius); margin-bottom: 16px;
+    }
+    .header-title { font-size: 17px; font-weight: 800; }
+    .header-sub { font-size: 12px; color: #cbd5e1; margin-top: 3px; }
+
+    .preset-wrap { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .btn-preset {
+      background: #eff6ff; border: 1px solid #bfdbfe; color: var(--primary);
+      padding: 6px 12px; border-radius: 16px; font-size: 11px; font-weight: 700; cursor: pointer;
+    }
+    .btn-preset:hover { background: var(--primary); color: white; }
+
+    .grid-select { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+    .card-select { background: white; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 12px; }
+    .card-select label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; display: block; }
+    .card-select select { width: 100%; padding: 8px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 12px; font-weight: 700; background: #fff; }
+
+    .sim-box {
+      background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: var(--radius-sm);
+      padding: 14px; margin-bottom: 18px; font-size: 12.5px;
+    }
+
+    .btn-submit {
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+      color: white; border: none; padding: 12px 20px; border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 700; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+
+    #status-toast {
+      display: none; padding: 10px 14px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600;
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header-card">
+    <div class="header-title">⚙️ Pelaras Wajaran & Wajaran Kelulusan Dinamik</div>
+    <div class="header-sub">Simulasi dan kemas kini kriteria markah lulus terus ke formula Google Sheet</div>
+  </div>
+
+  <div id="status-toast"></div>
+
+  <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-bottom:6px;">
+    ⚡ Pilihan Pratetap Cepat:
+  </div>
+  <div class="preset-wrap">
+    <button class="btn-preset" onclick="setPreset(0.70, 0.50, 0.70)">🟢 Standard Rasmi (70/50/70)</button>
+    <button class="btn-preset" onclick="setPreset(0.65, 0.50, 0.65)">🟡 Sederhana (65/50/65)</button>
+    <button class="btn-preset" onclick="setPreset(0.60, 0.50, 0.60)">🟠 Fleksibel (60/50/60)</button>
+    <button class="btn-preset" onclick="setPreset(0.50, 0.50, 0.50)">🔵 Minimum (50/50/50)</button>
+  </div>
+
+  <div class="grid-select">
+    <div class="card-select">
+      <label>🎖️ Kawad Kaki:</label>
+      <select id="sel-kawad" onchange="runSimulation()">
+        <option value="0.75">75% (Ketat)</option>
+        <option value="0.70" selected>70% (Standard PPD)</option>
+        <option value="0.65">65% (Sederhana)</option>
+        <option value="0.60">60% (Fleksibel)</option>
+        <option value="0.50">50% (Minimum)</option>
+      </select>
+    </div>
+
+    <div class="card-select">
+      <label>🪢 Tali Temali:</label>
+      <select id="sel-ikatan" onchange="runSimulation()">
+        <option value="0.60">60% (Ketat)</option>
+        <option value="0.50" selected>50% (Standard PPD)</option>
+        <option value="0.40">40% (Fleksibel)</option>
+        <option value="0.30">30% (Minimum)</option>
+      </select>
+    </div>
+
+    <div class="card-select">
+      <label>🏆 Keseluruhan:</label>
+      <select id="sel-overall" onchange="runSimulation()">
+        <option value="0.75">75% (Ketat)</option>
+        <option value="0.70" selected>70% (Standard PPD)</option>
+        <option value="0.65">65% (Sederhana)</option>
+        <option value="0.60">60% (Fleksibel)</option>
+        <option value="0.50">50% (Minimum)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="sim-box" id="sim-feedback">
+    Sedang memuatkan data simulasi...
+  </div>
+
+  <button class="btn-submit" id="btn-save-wajaran" onclick="saveThresholds()">
+    <span>💾</span> Kemas Kini & Guna Pakai ke Google Sheet Sekarang
+  </button>
+
+  <script>
+    var currentData = null;
+
+    window.onload = function() {
+      google.script.run
+        .withSuccessHandler(function(data) {
+          currentData = data;
+          if (data.thresholds) {
+            document.getElementById('sel-kawad').value = String(data.thresholds.thresholdKawad);
+            document.getElementById('sel-ikatan').value = String(data.thresholds.thresholdIkatan);
+            document.getElementById('sel-overall').value = String(data.thresholds.thresholdOverall);
+          }
+          runSimulation();
+        })
+        .getDashboardData();
+    };
+
+    function showToast(msg, isSuccess) {
+      var t = document.getElementById('status-toast');
+      t.style.display = 'block';
+      t.style.background = isSuccess ? '#f0fdf4' : '#fef2f2';
+      t.style.border = isSuccess ? '1px solid #bbf7d0' : '1px solid #fecaca';
+      t.style.color = isSuccess ? '#166534' : '#991b1b';
+      t.innerHTML = (isSuccess ? '✅ ' : '❌ ') + msg;
+      setTimeout(function() { t.style.display = 'none'; }, 6000);
+    }
+
+    function setPreset(k, i, o) {
+      document.getElementById('sel-kawad').value = String(k);
+      document.getElementById('sel-ikatan').value = String(i);
+      document.getElementById('sel-overall').value = String(o);
+      runSimulation();
+    }
+
+    function runSimulation() {
+      if (!currentData || !currentData.candidates) return;
+      var tk = parseFloat(document.getElementById('sel-kawad').value);
+      var ti = parseFloat(document.getElementById('sel-ikatan').value);
+      var to = parseFloat(document.getElementById('sel-overall').value);
+
+      var pass = 0;
+      currentData.candidates.forEach(function(c) {
+        if (c.rawKawad >= tk && c.rawIkatan >= ti && c.rawOverall >= to) pass++;
+      });
+
+      var rate = ((pass / currentData.totalCandidates) * 100).toFixed(1);
+      var diff = pass - currentData.totalPassCount;
+      var diffStr = diff >= 0 ? ("(+" + diff + " calon)") : ("(" + diff + " calon)");
+
+      document.getElementById('sim-feedback').innerHTML = 
+        '🔮 <strong>Hasil Simulasi:</strong> Dengan wajaran [Kawad ≥ <strong>' + (tk*100) + '%</strong>, Ikatan ≥ <strong>' + (ti*100) + '%</strong>, Keseluruhan ≥ <strong>' + (to*100) + '%</strong>]:<br>' +
+        '👉 Dijangka <strong>' + pass + ' / ' + currentData.totalCandidates + ' peserta</strong> (' + rate + '%) akan <strong>LULUS PANGKAT</strong> ' + diffStr + '.';
+    }
+
+    function saveThresholds() {
+      var btn = document.getElementById('btn-save-wajaran');
+      var orig = btn.innerHTML;
+      btn.innerHTML = 'Sedang mengemas kini formula Google Sheet...';
+      btn.disabled = true;
+
+      var cfg = {
+        thresholdKawad: parseFloat(document.getElementById('sel-kawad').value),
+        thresholdIkatan: parseFloat(document.getElementById('sel-ikatan').value),
+        thresholdOverall: parseFloat(document.getElementById('sel-overall').value),
+        wajaranKawad: 0.60,
+        wajaranBantuMula: 0.20,
+        wajaranIkatan: 0.20
+      };
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          btn.innerHTML = orig;
+          btn.disabled = false;
+          showToast(res, true);
+        })
+        .withFailureHandler(function(err) {
+          btn.innerHTML = orig;
+          btn.disabled = false;
+          showToast("Ralat: " + err.message, false);
+        })
+        .updatePassingThresholds(cfg);
+    }
+  </script>
+</body>
+</html>
+
+<? } ?>
