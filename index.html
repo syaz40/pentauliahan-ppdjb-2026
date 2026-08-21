@@ -1981,45 +1981,245 @@
       gap: 10px;
     }
 
-    /* KAD PODIUM CALON TERBAIK */
+    /* =========================================================================
+       SISTEM GAYAAN KORPORAT KEPUTUSAN, JADUAL & SLIP RASMI (PREMIUM UI)
+       ========================================================================= */
+    
+    /* KAD PODIUM & LEADERBOARD CALON TERBAIK */
     .top-category-card {
       background: #ffffff;
-      border: 1px solid var(--slate-200);
-      border-radius: var(--radius-lg);
-      padding: 22px;
-      box-shadow: var(--shadow-sm);
+      border: 1px solid #cbd5e1;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
       margin-bottom: 24px;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
     }
+    .top-category-card:hover {
+      box-shadow: 0 10px 25px -3px rgba(15, 23, 42, 0.1), 0 4px 10px -2px rgba(15, 23, 42, 0.05);
+      border-color: #94a3b8;
+    }
+    .top-category-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #1e3a8a, #3b82f6);
+    }
+    .top-category-card.tkrs-l::before { background: linear-gradient(90deg, #059669, #10b981); }
+    .top-category-card.tkrs-p::before { background: linear-gradient(90deg, #d97706, #f59e0b); }
+    .top-category-card.krs-l::before { background: linear-gradient(90deg, #1e40af, #3b82f6); }
+    .top-category-card.krs-p::before { background: linear-gradient(90deg, #db2777, #ec4899); }
+
     .top-category-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 16px;
-      padding-bottom: 12px;
-      border-bottom: 2px solid var(--slate-100);
+      margin-bottom: 18px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid #f1f5f9;
+      flex-wrap: wrap;
+      gap: 10px;
     }
     .top-category-title {
       font-size: 17px;
       font-weight: 800;
-      color: var(--slate-900);
+      color: #0f172a;
       display: flex;
       align-items: center;
       gap: 10px;
+      letter-spacing: -0.2px;
     }
+
+    /* BADGE KEDUDUKAN (RANK BADGES) */
     .rank-badge {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
+      min-width: 36px;
+      height: 36px;
+      padding: 0 8px;
+      border-radius: 10px;
       font-weight: 800;
-      font-size: 13px;
+      font-size: 13.5px;
+      letter-spacing: -0.3px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      white-space: nowrap;
     }
-    .rank-1 { background: #fef08a; color: #854d0e; border: 1.5px solid #eab308; }
-    .rank-2 { background: #e2e8f0; color: #334155; border: 1.5px solid #94a3b8; }
-    .rank-3 { background: #fed7aa; color: #9a3412; border: 1.5px solid #f97316; }
-    .rank-4, .rank-5 { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+    .rank-1 {
+      background: linear-gradient(135deg, #fef08a 0%, #fde047 50%, #eab308 100%);
+      color: #713f12;
+      border: 1.5px solid #ca8a04;
+      box-shadow: 0 2px 8px rgba(234, 179, 8, 0.35);
+    }
+    .rank-2 {
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+      color: #1e293b;
+      border: 1.5px solid #94a3b8;
+      box-shadow: 0 2px 6px rgba(148, 163, 184, 0.25);
+    }
+    .rank-3 {
+      background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 50%, #fb923c 100%);
+      color: #7c2d12;
+      border: 1.5px solid #ea580c;
+      box-shadow: 0 2px 6px rgba(249, 115, 22, 0.25);
+    }
+    .rank-4, .rank-5 {
+      background: #f1f5f9;
+      color: #334155;
+      border: 1.5px solid #cbd5e1;
+    }
+
+    /* SKOR PILL BESAR */
+    .score-display-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 14px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 20px;
+      color: #1e3a8a;
+      font-weight: 800;
+      font-size: 14.5px;
+      font-family: 'SF Mono', Consolas, Monaco, monospace;
+      white-space: nowrap;
+    }
+    .score-display-pill.gold {
+      background: #fefce8;
+      border-color: #fde047;
+      color: #854d0e;
+    }
+
+    /* BUTANG LIHAT SLIP */
+    .btn-slip-view {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: #ffffff;
+      color: #1e40af;
+      border: 1.5px solid #93c5fd;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+    .btn-slip-view:hover {
+      background: #1e40af;
+      color: #ffffff;
+      border-color: #1e40af;
+      box-shadow: 0 2px 8px rgba(30, 64, 175, 0.25);
+      transform: translateY(-1px);
+    }
+
+    /* KPI FILTER BAR DI ATAS JADUAL */
+    .kpi-quick-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .kpi-quick-card {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .kpi-quick-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      border-color: #cbd5e1;
+    }
+    .kpi-quick-card.active {
+      border-color: #2563eb;
+      background: #eff6ff;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    }
+
+    /* KEMAS KINI STRUKTUR JADUAL */
+    .table-container {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+    table.styled-table, table.data-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      text-align: left;
+      font-size: 13.5px;
+    }
+    table.styled-table th, table.data-table th {
+      background: #f8fafc;
+      color: #334155;
+      font-weight: 800;
+      padding: 13px 16px;
+      border-bottom: 2px solid #e2e8f0;
+      white-space: nowrap;
+      font-size: 12.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    table.styled-table td, table.data-table td {
+      padding: 13px 16px;
+      border-bottom: 1px solid #f1f5f9;
+      vertical-align: middle;
+      line-height: 1.45;
+    }
+    table.styled-table tr:hover td, table.data-table tr:hover td {
+      background-color: #f8fafc;
+    }
+    table.styled-table tr:last-child td, table.data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* KATEGORI FILTER TABS UNTUK KEPUTUSAN TERBAIK */
+    .top-filter-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .top-filter-btn {
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1.5px solid #cbd5e1;
+      background: #ffffff;
+      font-size: 13px;
+      font-weight: 700;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .top-filter-btn:hover {
+      border-color: #94a3b8;
+      background: #f8fafc;
+    }
+    .top-filter-btn.active {
+      background: #1e3a8a;
+      color: #ffffff;
+      border-color: #1e3a8a;
+      box-shadow: 0 2px 8px rgba(30, 58, 138, 0.3);
+    }
 
     .admin-only-slip-scores {
       display: none !important;
@@ -2051,25 +2251,17 @@
       }
       .modal-box-lg {
         box-shadow: none !important;
-        border: 2px solid #0f172a !important;
+        border: 1px solid #000000 !important;
         width: 100% !important;
-        max-width: 750px !important;
-        margin: 20px auto !important;
-        padding: 36px !important;
-        border-radius: 8px !important;
-        background: #ffffff !important;
-        color: #000000 !important;
+        max-width: 100% !important;
+        border-radius: 0 !important;
+        padding: 24px !important;
       }
-      .btn-close-modal, #btn-print-slip, #btn-close-slip {
+      .btn-close-modal, #btn-close-slip, #btn-print-slip {
         display: none !important;
       }
-      .status-badge {
-        border: 1.5px solid #0f172a !important;
-        color: #000000 !important;
-        font-weight: 800 !important;
-      }
     }
-
+  
   </style>
 
 </head>
@@ -2931,6 +3123,45 @@
 
 
 
+      <!-- BAR KPI PANTAS (SATU KLIK TAPIS) -->
+      <div class="kpi-quick-bar" id="kpi-filter-cards">
+        <div class="kpi-quick-card active" data-status="ALL">
+          <div>
+            <div style="font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase;">Semua Calon</div>
+            <div style="font-size:20px; font-weight:800; color:#0f172a;" id="kpi-count-all">305</div>
+          </div>
+          <i class="fa-solid fa-users" style="color:#3b82f6; font-size:20px;"></i>
+        </div>
+        <div class="kpi-quick-card" data-status="PASS">
+          <div>
+            <div style="font-size:11px; font-weight:700; color:#166534; text-transform:uppercase;">Lulus Penuh</div>
+            <div style="font-size:20px; font-weight:800; color:#16a34a;" id="kpi-count-pass">0</div>
+          </div>
+          <i class="fa-solid fa-circle-check" style="color:#16a34a; font-size:20px;"></i>
+        </div>
+        <div class="kpi-quick-card" data-status="CONDITIONAL">
+          <div>
+            <div style="font-size:11px; font-weight:700; color:#92400e; text-transform:uppercase;">Lulus Bersyarat</div>
+            <div style="font-size:20px; font-weight:800; color:#d97706;" id="kpi-count-cond">0</div>
+          </div>
+          <i class="fa-solid fa-triangle-exclamation" style="color:#d97706; font-size:20px;"></i>
+        </div>
+        <div class="kpi-quick-card" data-status="FAIL">
+          <div>
+            <div style="font-size:11px; font-weight:700; color:#991b1b; text-transform:uppercase;">Belum Capai</div>
+            <div style="font-size:20px; font-weight:800; color:#dc2626;" id="kpi-count-fail">0</div>
+          </div>
+          <i class="fa-solid fa-circle-xmark" style="color:#dc2626; font-size:20px;"></i>
+        </div>
+        <div class="kpi-quick-card" data-status="ABSENT">
+          <div>
+            <div style="font-size:11px; font-weight:700; color:#374151; text-transform:uppercase;">Tidak Hadir</div>
+            <div style="font-size:20px; font-weight:800; color:#4b5563;" id="kpi-count-absent">0</div>
+          </div>
+          <i class="fa-solid fa-user-slash" style="color:#6b7280; font-size:20px;"></i>
+        </div>
+      </div>
+
       <div class="action-toolbar">
 
         <div class="search-box">
@@ -3028,19 +3259,13 @@
           <thead>
 
             <tr>
-
-              <th>No Badan</th>
-
-              <th>Nama Calon</th>
-
-              <th>Unit</th>
-
-              <th>Sekolah</th>
-
-              <th>Jumlah Markah</th>
-
-              <th>Status Keputusan</th>
-
+              <th style="width:115px; text-align:center;">No Badan</th>
+              <th style="min-width:240px;">Nama Calon</th>
+              <th style="width:90px; text-align:center;">Unit</th>
+              <th style="min-width:200px;">Sekolah</th>
+              <th style="width:125px; text-align:center;">Markah (%)</th>
+              <th style="width:150px; text-align:center;">Status Keputusan</th>
+              <th style="width:110px; text-align:center;">Tindakan</th>
             </tr>
 
           </thead>
@@ -3077,47 +3302,71 @@
          =================================================================== -->
     <section class="tab-content" id="tab-top-results">
       <!-- HERO BANNER KEPUTUSAN TERBAIK -->
-      <div class="app-card" style="margin-bottom:24px; background:linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%); color:#ffffff; border:none;">
-        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+      <div class="app-card" style="margin-bottom:24px; background:linear-gradient(135deg, #090d16 0%, #0f172a 40%, #1e3a8a 100%); color:#ffffff; border:none; position:relative; overflow:hidden;">
+        <div style="position:absolute; right:-20px; top:-20px; font-size:160px; color:rgba(255,255,255,0.03); pointer-events:none;">
+          <i class="fa-solid fa-trophy"></i>
+        </div>
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:20px; position:relative; z-index:1;">
           <div>
-            <span class="header-badge gold" style="margin-bottom:10px; display:inline-flex;">
+            <span class="header-badge gold" style="margin-bottom:12px; display:inline-flex; font-size:12px; font-weight:800; letter-spacing:0.5px;">
               <i class="fa-solid fa-award"></i> ANUGERAH KECEMERLANGAN PENTAULIAHAN 2026
             </span>
-            <h2 style="font-size:22px; font-weight:800; color:#ffffff; margin:6px 0;">
+            <h2 style="font-size:24px; font-weight:900; color:#ffffff; margin:6px 0; letter-spacing:-0.3px;">
               🏆 KEPUTUSAN 5 CALON TERBAIK SETIAP KATEGORI (TOP 20 DAERAH)
             </h2>
-            <p style="font-size:14px; color:#cbd5e1; margin:0;">
-              Pengiktirafan rasmi bagi calon-calon berprestasi tertinggi daerah mengikut Kategori TKRS & KRS (Lelaki & Perempuan).
+            <p style="font-size:14px; color:#cbd5e1; margin:0; line-height:1.6; max-width:760px;">
+              Pengiktirafan rasmi bagi calon-calon berprestasi tertinggi daerah Johor Bahru mengikut Kategori TKRS & KRS (Lelaki & Perempuan) berpandukan wajaran penilaian standard.
             </p>
           </div>
-          <div style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); border-radius:12px; padding:12px 20px; text-align:center;">
-            <span style="font-size:12px; font-weight:700; color:#fde047; text-transform:uppercase;">Jumlah Calon Terbaik</span>
-            <h3 style="font-size:28px; font-weight:800; color:#ffffff; margin:2px 0;">20 Calon</h3>
+          <div style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); border-radius:14px; padding:14px 24px; text-align:center; backdrop-filter:blur(8px);">
+            <span style="font-size:12px; font-weight:700; color:#fde047; text-transform:uppercase; letter-spacing:0.5px;">Jumlah Calon Terbaik</span>
+            <h3 style="font-size:32px; font-weight:900; color:#ffffff; margin:2px 0;">20 Calon</h3>
+            <span style="font-size:11px; color:#93c5fd;">Top 5 Setiap Kategori</span>
           </div>
         </div>
       </div>
 
-      <!-- GRID 4 KATEGORI (2x2) -->
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(520px, 1fr)); gap:24px;">
+      <!-- KATEGORI FILTER TABS -->
+      <div class="top-filter-group" id="top-category-filter-bar">
+        <button class="top-filter-btn active" data-filter="all">
+          <i class="fa-solid fa-layer-group"></i> Semua Kategori (Top 20)
+        </button>
+        <button class="top-filter-btn" data-filter="tkrs-l">
+          <i class="fa-solid fa-medal" style="color:#10b981;"></i> TKRS Lelaki
+        </button>
+        <button class="top-filter-btn" data-filter="tkrs-p">
+          <i class="fa-solid fa-medal" style="color:#f59e0b;"></i> TKRS Perempuan
+        </button>
+        <button class="top-filter-btn" data-filter="krs-l">
+          <i class="fa-solid fa-medal" style="color:#3b82f6;"></i> KRS Lelaki
+        </button>
+        <button class="top-filter-btn" data-filter="krs-p">
+          <i class="fa-solid fa-medal" style="color:#ec4899;"></i> KRS Perempuan
+        </button>
+      </div>
+
+      <!-- GRID 4 KATEGORI -->
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(500px, 1fr)); gap:24px;" id="top-cards-grid">
         
         <!-- 1. TKRS LELAKI -->
-        <div class="top-category-card">
+        <div class="top-category-card tkrs-l" data-category="tkrs-l">
           <div class="top-category-header">
-            <div class="top-category-title" style="color:#059669;">
-              <i class="fa-solid fa-medal" style="color:#eab308; font-size:20px;"></i>
+            <div class="top-category-title" style="color:#065f46;">
+              <span class="rank-badge rank-1" style="width:30px; height:30px; min-width:30px; font-size:12px;">🥇</span>
               <span>5 TERBAIK TKRS — LELAKI</span>
             </div>
             <span class="unit-badge tkrs">SEKOLAH RENDAH</span>
           </div>
-          <div class="table-container" style="box-shadow:none; border:1px solid var(--slate-200);">
+          <div class="table-container" style="box-shadow:none; border:1px solid #e2e8f0;">
             <table class="data-table">
               <thead>
                 <tr>
-                  <th style="width:70px; text-align:center;">Ked.</th>
-                  <th style="width:130px; text-align:center;">No Badan</th>
+                  <th style="width:65px; text-align:center;">Ked.</th>
+                  <th style="width:125px; text-align:center;">No Badan</th>
                   <th style="text-align:left;">Nama Calon</th>
                   <th style="text-align:left;">Sekolah</th>
-                  <th style="width:140px; text-align:center;">Markah Keseluruhan (%)</th>
+                  <th style="width:130px; text-align:center;">Markah</th>
+                  <th style="width:75px; text-align:center;">Slip</th>
                 </tr>
               </thead>
               <tbody id="top-tbody-tkrs-l">
@@ -3128,23 +3377,24 @@
         </div>
 
         <!-- 2. TKRS PEREMPUAN -->
-        <div class="top-category-card">
+        <div class="top-category-card tkrs-p" data-category="tkrs-p">
           <div class="top-category-header">
-            <div class="top-category-title" style="color:#d97706;">
-              <i class="fa-solid fa-medal" style="color:#eab308; font-size:20px;"></i>
+            <div class="top-category-title" style="color:#92400e;">
+              <span class="rank-badge rank-1" style="width:30px; height:30px; min-width:30px; font-size:12px;">🥇</span>
               <span>5 TERBAIK TKRS — PEREMPUAN</span>
             </div>
             <span class="unit-badge tkrs">SEKOLAH RENDAH</span>
           </div>
-          <div class="table-container" style="box-shadow:none; border:1px solid var(--slate-200);">
+          <div class="table-container" style="box-shadow:none; border:1px solid #e2e8f0;">
             <table class="data-table">
               <thead>
                 <tr>
-                  <th style="width:70px; text-align:center;">Ked.</th>
-                  <th style="width:130px; text-align:center;">No Badan</th>
+                  <th style="width:65px; text-align:center;">Ked.</th>
+                  <th style="width:125px; text-align:center;">No Badan</th>
                   <th style="text-align:left;">Nama Calon</th>
                   <th style="text-align:left;">Sekolah</th>
-                  <th style="width:140px; text-align:center;">Markah Keseluruhan (%)</th>
+                  <th style="width:130px; text-align:center;">Markah</th>
+                  <th style="width:75px; text-align:center;">Slip</th>
                 </tr>
               </thead>
               <tbody id="top-tbody-tkrs-p">
@@ -3155,23 +3405,24 @@
         </div>
 
         <!-- 3. KRS LELAKI -->
-        <div class="top-category-card">
+        <div class="top-category-card krs-l" data-category="krs-l">
           <div class="top-category-header">
             <div class="top-category-title" style="color:#1e40af;">
-              <i class="fa-solid fa-medal" style="color:#eab308; font-size:20px;"></i>
+              <span class="rank-badge rank-1" style="width:30px; height:30px; min-width:30px; font-size:12px;">🥇</span>
               <span>5 TERBAIK KRS — LELAKI</span>
             </div>
             <span class="unit-badge krs">SEKOLAH MENENGAH</span>
           </div>
-          <div class="table-container" style="box-shadow:none; border:1px solid var(--slate-200);">
+          <div class="table-container" style="box-shadow:none; border:1px solid #e2e8f0;">
             <table class="data-table">
               <thead>
                 <tr>
-                  <th style="width:70px; text-align:center;">Ked.</th>
-                  <th style="width:130px; text-align:center;">No Badan</th>
+                  <th style="width:65px; text-align:center;">Ked.</th>
+                  <th style="width:125px; text-align:center;">No Badan</th>
                   <th style="text-align:left;">Nama Calon</th>
                   <th style="text-align:left;">Sekolah</th>
-                  <th style="width:140px; text-align:center;">Markah Keseluruhan (%)</th>
+                  <th style="width:130px; text-align:center;">Markah</th>
+                  <th style="width:75px; text-align:center;">Slip</th>
                 </tr>
               </thead>
               <tbody id="top-tbody-krs-l">
@@ -3182,23 +3433,24 @@
         </div>
 
         <!-- 4. KRS PEREMPUAN -->
-        <div class="top-category-card">
+        <div class="top-category-card krs-p" data-category="krs-p">
           <div class="top-category-header">
-            <div class="top-category-title" style="color:#db2777;">
-              <i class="fa-solid fa-medal" style="color:#eab308; font-size:20px;"></i>
+            <div class="top-category-title" style="color:#9d174d;">
+              <span class="rank-badge rank-1" style="width:30px; height:30px; min-width:30px; font-size:12px;">🥇</span>
               <span>5 TERBAIK KRS — PEREMPUAN</span>
             </div>
             <span class="unit-badge krs">SEKOLAH MENENGAH</span>
           </div>
-          <div class="table-container" style="box-shadow:none; border:1px solid var(--slate-200);">
+          <div class="table-container" style="box-shadow:none; border:1px solid #e2e8f0;">
             <table class="data-table">
               <thead>
                 <tr>
-                  <th style="width:70px; text-align:center;">Ked.</th>
-                  <th style="width:130px; text-align:center;">No Badan</th>
+                  <th style="width:65px; text-align:center;">Ked.</th>
+                  <th style="width:125px; text-align:center;">No Badan</th>
                   <th style="text-align:left;">Nama Calon</th>
                   <th style="text-align:left;">Sekolah</th>
-                  <th style="width:140px; text-align:center;">Markah Keseluruhan (%)</th>
+                  <th style="width:130px; text-align:center;">Markah</th>
+                  <th style="width:75px; text-align:center;">Slip</th>
                 </tr>
               </thead>
               <tbody id="top-tbody-krs-p">
@@ -4154,35 +4406,48 @@
           const tbody = document.getElementById(elementId);
           if (!tbody) return;
           if (!candidatesList || candidatesList.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:24px; color:#94a3b8; font-weight:600;">Tiada rekod calon berdaftar.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:28px; color:#94a3b8; font-weight:600;">Tiada rekod calon berdaftar.</td></tr>';
             return;
           }
 
           const rankBadges = [
-            '<span class="rank-badge rank-1">🥇 1</span>',
-            '<span class="rank-badge rank-2">🥈 2</span>',
-            '<span class="rank-badge rank-3">🥉 3</span>',
+            '<span class="rank-badge rank-1" title="Johan Daerah">🥇 1</span>',
+            '<span class="rank-badge rank-2" title="Naib Johan Daerah">🥈 2</span>',
+            '<span class="rank-badge rank-3" title="Tempat Ketiga">🥉 3</span>',
             '<span class="rank-badge rank-4">4</span>',
             '<span class="rank-badge rank-5">5</span>'
           ];
 
           tbody.innerHTML = candidatesList.map((c, idx) => {
             const badge = rankBadges[idx] || `<span class="rank-badge">${idx + 1}</span>`;
+            const scoreVal = typeof c.overall === 'string' ? c.overall : ((parseFloat(c.rawOverall || 0) * 100).toFixed(1) + '%');
+            const noBadan = c.noBadan || c.noGiliran || '-';
+            const pillClass = idx === 0 ? 'score-display-pill gold' : 'score-display-pill';
 
             return `
               <tr>
                 <td style="text-align:center; vertical-align:middle;">${badge}</td>
-                <td style="text-align:center; font-weight:800; color:var(--royal-blue); vertical-align:middle;">${c.noBadan || c.noGiliran}</td>
-                <td style="text-align:left; font-weight:800; color:var(--slate-900); vertical-align:middle;">${(c.nama || '').toUpperCase()}</td>
-                <td style="text-align:left; font-size:13px; color:var(--slate-700); font-weight:600; vertical-align:middle;">${(c.sekolah || '').toUpperCase()}</td>
-                <td style="text-align:center; font-weight:800; color:#1e3a8a; font-size:16px; vertical-align:middle;">${c.overall}%</td>
+                <td style="text-align:center; font-weight:800; color:#1e40af; font-family:monospace; font-size:13.5px; vertical-align:middle;">${noBadan}</td>
+                <td style="text-align:left; vertical-align:middle;">
+                  <strong style="color:#0f172a; font-weight:800; font-size:14px; display:block; line-height:1.3;">${(c.nama || '').toUpperCase()}</strong>
+                </td>
+                <td style="text-align:left; font-size:13px; color:#475569; font-weight:600; vertical-align:middle; line-height:1.3;">
+                  <i class="fa-solid fa-school" style="color:#94a3b8; font-size:11px; margin-right:4px;"></i>${(c.sekolah || '').toUpperCase()}
+                </td>
+                <td style="text-align:center; vertical-align:middle;">
+                  <span class="${pillClass}">${scoreVal}</span>
+                </td>
+                <td style="text-align:center; vertical-align:middle;">
+                  <button class="btn-slip-view" onclick="window.App.openCandidateSlip('${noBadan}')" title="Buka Slip Keputusan">
+                    <i class="fa-solid fa-receipt"></i> Slip
+                  </button>
+                </td>
               </tr>
             `;
           }).join('');
         };
 
         const activeCandidates = this.state.candidates.filter(c => !c.isAbsent && !c.isTarikDiri);
-        // BUG FIX: Gunakan rawOverall (nombor) bukan overall (string) untuk sort
         const sortByScore = (a, b) => (parseFloat(b.rawOverall) || 0) - (parseFloat(a.rawOverall) || 0);
         const tkrsL = activeCandidates.filter(c => c.unit === 'TKRS' && c.jantina === 'L').sort(sortByScore).slice(0, 5);
         const tkrsP = activeCandidates.filter(c => c.unit === 'TKRS' && c.jantina === 'P').sort(sortByScore).slice(0, 5);
@@ -4193,197 +4458,175 @@
         renderGroup('top-tbody-tkrs-p', tkrsP);
         renderGroup('top-tbody-krs-l', krsL);
         renderGroup('top-tbody-krs-p', krsP);
+
+        // Bind Category Switcher buttons on Tab 4
+        const filterBtns = document.querySelectorAll('.top-filter-btn');
+        filterBtns.forEach(btn => {
+          btn.onclick = () => {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const target = btn.getAttribute('data-filter');
+            const cards = document.querySelectorAll('#top-cards-grid .top-category-card');
+            cards.forEach(card => {
+              if (target === 'all' || card.getAttribute('data-category') === target) {
+                card.style.display = 'block';
+              } else {
+                card.style.display = 'none';
+              }
+            });
+          };
+        });
       },
 
       renderCandidatesTable() {
-
         const tbody = document.getElementById('table-candidates-body');
-
         if (!tbody) return;
 
+        const searchVal = (document.getElementById('input-candidate-search')?.value || '').toLowerCase().trim();
+        const unitVal = document.getElementById('select-unit')?.value || 'ALL';
+        const kumpulanVal = document.getElementById('select-kumpulan')?.value || 'ALL';
+        const jantinaVal = document.getElementById('select-jantina')?.value || 'ALL';
+        const statusVal = document.getElementById('select-status')?.value || 'ALL';
 
+        // Update KPI Counter Pills above the table
+        let countAll = this.state.candidates.length;
+        let countPass = 0, countCond = 0, countFail = 0, countAbsent = 0;
 
-        const searchQuery = (document.getElementById('input-candidate-search')?.value || '').toLowerCase();
-
-        const filterUnit = document.getElementById('select-unit')?.value || 'ALL';
-
-        const filterKumpulan = document.getElementById('select-kumpulan')?.value || 'ALL';
-
-        const filterJantina = document.getElementById('select-jantina')?.value || 'ALL';
-
-        const filterStatus = document.getElementById('select-status')?.value || 'ALL';
-
-
-
-        const filtered = this.state.candidates.filter(c => {
-
-          const matchSearch = (c.nama || '').toLowerCase().includes(searchQuery) ||
-
-                              (c.noBadan || '').toLowerCase().includes(searchQuery) ||
-
-                              (c.sekolah || '').toLowerCase().includes(searchQuery);
-
-          
-
-          const matchUnit = filterUnit === 'ALL' || c.unit === filterUnit;
-
-          const matchKumpulan = filterKumpulan === 'ALL' || c.kumpulan === filterKumpulan;
-
-          const matchJantina = filterJantina === 'ALL' || c.jantina === filterJantina;
-
-
-
-          let matchStatus = true;
-
-          if (filterStatus === 'PASS') {
-
-            matchStatus = c.statusText === 'LLL';
-
-          } else if (filterStatus === 'CONDITIONAL') {
-
-            matchStatus = c.statusText !== 'LLL' && !c.isAbsent && !c.isTarikDiri && (c.rawOverall >= 0.5);
-
-          } else if (filterStatus === 'FAIL') {
-
-            matchStatus = c.statusText !== 'LLL' && !c.isAbsent && !c.isTarikDiri && c.rawOverall < 0.5 && (c.rawOverall > 0);
-
-          } else if (filterStatus === 'PENDING') {
-
-            matchStatus = (!c.rawOverall || c.rawOverall === 0) && !c.isAbsent && !c.isTarikDiri;
-
-          } else if (filterStatus === 'ABSENT') {
-
-            matchStatus = c.isAbsent || c.statusText === 'TH' || (c.catatan && c.catatan.includes('TIDAK HADIR'));
-
-          } else if (filterStatus === 'WITHDRAW') {
-
-            matchStatus = c.isTarikDiri || c.statusText === 'TARIK DIRI' || (c.catatan && c.catatan.includes('TARIK DIRI'));
-
+        this.state.candidates.forEach(c => {
+          if (c.statusText === 'TH' || c.isAbsent || (c.catatan && c.catatan.includes('TIDAK HADIR')) || c.isTarikDiri || c.statusText === 'TARIK DIRI') {
+            countAbsent++;
+          } else if (c.statusText === 'LLL') {
+            countPass++;
+          } else if (c.rawOverall >= 0.50) {
+            countCond++;
+          } else if (c.rawOverall > 0) {
+            countFail++;
           }
-
-
-
-          return matchSearch && matchUnit && matchKumpulan && matchJantina && matchStatus;
-
         });
 
+        const elAll = document.getElementById('kpi-count-all');
+        const elPass = document.getElementById('kpi-count-pass');
+        const elCond = document.getElementById('kpi-count-cond');
+        const elFail = document.getElementById('kpi-count-fail');
+        const elAbs = document.getElementById('kpi-count-absent');
+        if (elAll) elAll.innerText = countAll;
+        if (elPass) elPass.innerText = countPass;
+        if (elCond) elCond.innerText = countCond;
+        if (elFail) elFail.innerText = countFail;
+        if (elAbs) elAbs.innerText = countAbsent;
 
+        const filtered = this.state.candidates.filter(c => {
+          let matchSearch = true;
+          if (searchVal) {
+            matchSearch = (c.nama && c.nama.toLowerCase().includes(searchVal)) ||
+                          (c.noBadan && c.noBadan.toLowerCase().includes(searchVal)) ||
+                          (c.noGiliran && c.noGiliran.toLowerCase().includes(searchVal)) ||
+                          (c.sekolah && c.sekolah.toLowerCase().includes(searchVal));
+          }
+
+          let matchUnit = true;
+          if (unitVal !== 'ALL') {
+            matchUnit = (c.unit === unitVal);
+          }
+
+          let matchKumpulan = true;
+          if (kumpulanVal !== 'ALL') {
+            matchKumpulan = (c.kumpulan === kumpulanVal);
+          }
+
+          let matchJantina = true;
+          if (jantinaVal !== 'ALL') {
+            matchJantina = (c.jantina === jantinaVal);
+          }
+
+          let matchStatus = true;
+          if (statusVal === 'PASS') {
+            matchStatus = (c.statusText === 'LLL' && !c.isAbsent && !c.isTarikDiri);
+          } else if (statusVal === 'CONDITIONAL') {
+            matchStatus = (c.rawOverall >= 0.50 && c.statusText !== 'LLL' && !c.isAbsent && !c.isTarikDiri);
+          } else if (statusVal === 'FAIL') {
+            matchStatus = (c.rawOverall > 0 && c.rawOverall < 0.50 && c.statusText !== 'LLL' && !c.isAbsent && !c.isTarikDiri);
+          } else if (statusVal === 'PENDING') {
+            matchStatus = (c.rawOverall === 0 && !c.isAbsent && !c.isTarikDiri && c.statusText !== 'TH');
+          } else if (statusVal === 'ABSENT') {
+            matchStatus = c.isAbsent || c.statusText === 'TH' || (c.catatan && c.catatan.includes('TIDAK HADIR'));
+          } else if (statusVal === 'WITHDRAW') {
+            matchStatus = c.isTarikDiri || c.statusText === 'TARIK DIRI' || (c.catatan && c.catatan.includes('TARIK DIRI'));
+          }
+
+          return matchSearch && matchUnit && matchKumpulan && matchJantina && matchStatus;
+        });
 
         tbody.innerHTML = '';
 
         if (filtered.length === 0) {
-
-          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:32px; color:var(--slate-500); font-weight:600;">Tiada rekod calon yang sepadan dengan carian atau penapis anda.</td></tr>';
-
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:36px; color:#64748b; font-weight:600; font-size:14px;"><i class="fa-solid fa-magnifying-glass" style="margin-right:8px; color:#94a3b8;"></i>Tiada rekod calon yang sepadan dengan carian atau penapis anda.</td></tr>';
           return;
-
         }
-
-
 
         filtered.forEach(c => {
-
           let badgeHtml = '<span class="status-badge pending">Belum Dinilai</span>';
-
           if (c.isTarikDiri || c.statusText === 'TARIK DIRI' || (c.catatan && c.catatan.includes('TARIK DIRI'))) {
-
             badgeHtml = '<span class="status-badge withdraw"><i class="fa-solid fa-person-walking-arrow-right"></i> Tarik Diri</span>';
-
           } else if (c.statusText === 'TH' || c.isAbsent || (c.catatan && c.catatan.includes('TIDAK HADIR'))) {
-
             badgeHtml = '<span class="status-badge absent"><i class="fa-solid fa-user-slash"></i> Tidak Hadir (TH)</span>';
-
           } else if (c.statusText === 'LLL') {
-
             badgeHtml = '<span class="status-badge pass"><i class="fa-solid fa-circle-check"></i> Lulus (LLL)</span>';
-
           } else if (c.rawOverall >= 0.50) {
-
             badgeHtml = `<span class="status-badge conditional"><i class="fa-solid fa-triangle-exclamation"></i> Bersyarat (${c.statusText})</span>`;
-
           } else if (c.rawOverall > 0) {
-
             badgeHtml = `<span class="status-badge fail"><i class="fa-solid fa-circle-xmark"></i> Gagal (${c.statusText})</span>`;
-
           }
 
-
-
           const unitClass = c.unit === 'TKRS' ? 'tkrs' : 'krs';
-
-
+          const noBadan = c.noBadan || c.noGiliran || '-';
+          const scoreVal = typeof c.overall === 'string' ? c.overall : ((parseFloat(c.rawOverall || 0) * 100).toFixed(1) + '%');
 
           const tr = document.createElement('tr');
-
           tr.innerHTML = `
-
-            <td><strong>${c.noBadan}</strong></td>
-
+            <td style="text-align:center;">
+              <strong style="color:#1e40af; font-family:monospace; font-size:13.5px;">${noBadan}</strong>
+            </td>
             <td>
-
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-
-                <strong style="color:var(--slate-900); font-weight:700;">${c.nama}</strong>
-
-                <button class="btn-table-pick" data-id="${c.noBadan}" title="Pilih Calon untuk Pengurusan Kehadiran" style="${this.state.isAdminLoggedIn ? 'display:inline-block;' : 'display:none;'}">
-
-                  <i class="fa-solid fa-user-gear"></i> Urus
-
+              <strong style="color:#0f172a; font-weight:800; font-size:14px; display:block; line-height:1.3;">${(c.nama || '').toUpperCase()}</strong>
+              ${c.noGiliran && c.noGiliran !== noBadan ? `<small style="color:#64748b; font-weight:600;">Giliran: ${c.noGiliran}</small>` : ''}
+            </td>
+            <td style="text-align:center;">
+              <span class="unit-badge ${unitClass}">${c.unit}</span>
+            </td>
+            <td style="color:#334155; font-weight:600; font-size:13px; line-height:1.35;">
+              <i class="fa-solid fa-school" style="color:#94a3b8; font-size:11px; margin-right:4px;"></i>${(c.sekolah || '').toUpperCase()}
+            </td>
+            <td style="text-align:center;">
+              <strong style="font-size:15px; color:#0f172a; font-family:monospace;">${scoreVal}</strong>
+            </td>
+            <td style="text-align:center;">${badgeHtml}</td>
+            <td style="text-align:center; white-space:nowrap;">
+              <div style="display:inline-flex; align-items:center; gap:6px;">
+                <button class="btn-slip-view" onclick="window.App.openCandidateSlip('${noBadan}')" title="Buka Slip Keputusan Rasmi">
+                  <i class="fa-solid fa-receipt"></i> Slip
                 </button>
-
+                <button class="btn-table-pick" data-id="${noBadan}" title="Pilih Calon untuk Pengurusan Kehadiran" style="${this.state.isAdminLoggedIn ? 'display:inline-flex;' : 'display:none;'}">
+                  <i class="fa-solid fa-user-gear"></i> Urus
+                </button>
               </div>
-
             </td>
-
-            <td>
-
-              <span class="unit-badge ${unitClass}">
-
-                ${c.unit}
-
-              </span>
-
-            </td>
-
-            <td style="color:var(--slate-700); font-weight:600;">${c.sekolah}</td>
-
-            <td><strong style="font-size:14.5px; color:var(--slate-900);">${c.overall || '0.0%'}</strong></td>
-
-            <td>${badgeHtml}</td>
-
           `;
-
           tbody.appendChild(tr);
-
         });
-
-
 
         tbody.querySelectorAll('.btn-table-pick').forEach(btn => {
-
           btn.addEventListener('click', (e) => {
-
             const id = e.currentTarget.getAttribute('data-id');
-
             this.selectCandidateForManage(id);
-
           });
-
         });
 
-
-
         const countLabel = document.getElementById('label-table-count');
-
         if (countLabel) {
-
           countLabel.innerText = `Memaparkan ${filtered.length} daripada ${this.state.candidates.length} calon`;
-
         }
-
       },
-
-
 
       selectCandidateForManage(noBadan) {
 
@@ -4478,15 +4721,69 @@
 
 
       // =========================================================
+      // METHOD: openCandidateSlip
+      // Buka modal slip keputusan calon rasmi & isi butiran dinamik.
+      // =========================================================
+      openCandidateSlip(id) {
+        if (!id) return;
+        const c = this.state.candidates.find(item => (item.noBadan === id || item.noGiliran === id));
+        if (!c) {
+          alert('Rekod calon tidak dijumpai.');
+          return;
+        }
+
+        const modal = document.getElementById('modal-slip-backdrop');
+        if (!modal) return;
+
+        // Butiran maklumat asas calon
+        document.getElementById('slip-candidate-name').textContent = (c.nama || '-').toUpperCase();
+        document.getElementById('slip-candidate-nobadan').textContent = c.noBadan || c.noGiliran || '-';
+        document.getElementById('slip-candidate-unit').textContent = `${c.unit || '-'} • Pangkat: ${c.pangkat || (c.unit === 'TKRS' ? 'Koperal' : 'Sarjan')}`;
+        document.getElementById('slip-candidate-sekolah').textContent = (c.sekolah || '-').toUpperCase();
+
+        // Skor keseluruhan
+        const scoreVal = typeof c.overall === 'string' ? c.overall : ((parseFloat(c.rawOverall || 0) * 100).toFixed(1) + '%');
+        document.getElementById('slip-score-overall').textContent = scoreVal;
+
+        // Badge status keputusan
+        let badgeHtml = '<span class="status-badge pending">Belum Dinilai</span>';
+        if (c.isTarikDiri || c.statusText === 'TARIK DIRI' || (c.catatan && c.catatan.includes('TARIK DIRI'))) {
+          badgeHtml = '<span class="status-badge withdraw" style="font-size:14px; padding:6px 14px;"><i class="fa-solid fa-person-walking-arrow-right"></i> TARIK DIRI</span>';
+        } else if (c.statusText === 'TH' || c.isAbsent || (c.catatan && c.catatan.includes('TIDAK HADIR'))) {
+          badgeHtml = '<span class="status-badge absent" style="font-size:14px; padding:6px 14px;"><i class="fa-solid fa-user-slash"></i> TIDAK HADIR (TH)</span>';
+        } else if (c.statusText === 'LLL') {
+          badgeHtml = '<span class="status-badge pass" style="font-size:14px; padding:6px 14px;"><i class="fa-solid fa-circle-check"></i> LULUS PENTAULIAHAN (LLL)</span>';
+        } else if (c.rawOverall >= 0.50) {
+          badgeHtml = `<span class="status-badge conditional" style="font-size:14px; padding:6px 14px;"><i class="fa-solid fa-triangle-exclamation"></i> LULUS BERSYARAT (${c.statusText})</span>`;
+        } else if (c.rawOverall > 0) {
+          badgeHtml = `<span class="status-badge fail" style="font-size:14px; padding:6px 14px;"><i class="fa-solid fa-circle-xmark"></i> BELUM CAPAI TAHAP (${c.statusText})</span>`;
+        }
+        document.getElementById('slip-status-badge').innerHTML = badgeHtml;
+
+        // Perincian markah 3 modul
+        const adminBreakdown = document.getElementById('slip-admin-module-breakdown');
+        if (adminBreakdown) {
+          adminBreakdown.style.display = 'block';
+          const kawadVal = typeof c.kawad === 'string' ? c.kawad : ((parseFloat(c.rawKawad || 0) * 100).toFixed(1) + '%');
+          const bmVal = typeof c.bantuMula === 'string' ? c.bantuMula : ((parseFloat(c.rawBantuMula || 0) * 100).toFixed(1) + '%');
+          const ikatanVal = typeof c.ikatan === 'string' ? c.ikatan : ((parseFloat(c.rawIkatan || 0) * 100).toFixed(1) + '%');
+          document.getElementById('slip-score-kawad').textContent = kawadVal;
+          document.getElementById('slip-score-bm').textContent = bmVal;
+          document.getElementById('slip-score-ikatan').textContent = ikatanVal;
+        }
+
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      },
+
+      // =========================================================
       // METHOD: closeCandidateSlip
       // Tutup modal slip calon.
       // =========================================================
       closeCandidateSlip() {
-
         const backdrop = document.getElementById('modal-slip-backdrop');
         if (backdrop) backdrop.style.display = 'none';
         document.body.style.overflow = '';
-
       },
 
 
@@ -4946,6 +5243,21 @@
         });
 
 
+
+        // Bind Quick KPI Cards on Tab 3
+        const kpiCards = document.querySelectorAll('.kpi-quick-card');
+        kpiCards.forEach(card => {
+          card.onclick = () => {
+            kpiCards.forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            const targetStatus = card.getAttribute('data-status');
+            const selectStatus = document.getElementById('select-status');
+            if (selectStatus) {
+              selectStatus.value = targetStatus;
+              this.renderCandidatesTable();
+            }
+          };
+        });
 
         document.getElementById('btn-csv-export')?.addEventListener('click', () => {
 
