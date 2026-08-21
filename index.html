@@ -3852,10 +3852,8 @@
 
         return new Promise((resolve, reject) => {
 
-          const runner = google.script.run;
-
+          const runner = google.script.run
             .withSuccessHandler(res => resolve(res))
-
             .withFailureHandler(err => reject(err));
 
 
@@ -5238,12 +5236,9 @@
 
         if (this.state.charts.topSchools) {
 
-          const sortedSchools = Object.keys(schoolMap);
-
+          const sortedSchools = Object.keys(schoolMap)
             .map(k => ({ name: k, count: schoolMap[k] }))
-
             .sort((a, b) => b.count - a.count)
-
             .slice(0, 10);
 
 
