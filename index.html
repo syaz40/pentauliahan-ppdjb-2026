@@ -4695,9 +4695,9 @@
           if (manageCard)  manageCard.style.display  = 'none';
         }
 
-        // Tunjuk/sembunyi butang pentadbiran dalam jadual calon
+        // Pastikan butang Urus sentiasa boleh dilihat dan diklik oleh pengguna
         document.querySelectorAll('.btn-table-pick').forEach(btn => {
-          btn.style.display = this.state.isAdminLoggedIn ? 'inline-block' : 'none';
+          btn.style.display = 'inline-flex';
         });
 
       },
