@@ -4606,8 +4606,8 @@
                 <button class="btn-slip-view" onclick="window.App.openCandidateSlip('${noBadan}')" title="Buka Slip Keputusan Rasmi">
                   <i class="fa-solid fa-receipt"></i> Slip
                 </button>
-                <button class="btn-table-pick" data-id="${noBadan}" title="Pilih Calon untuk Pengurusan Kehadiran" style="${this.state.isAdminLoggedIn ? 'display:inline-flex;' : 'display:none;'}">
-                  <i class="fa-solid fa-user-gear"></i> Urus
+                <button class="btn-table-pick" onclick="window.App.openManageModal('${noBadan}')" title="Urus Kehadiran / Tarik Diri / Gantian">
+                  <i class="fa-solid fa-user-pen"></i> Urus
                 </button>
               </div>
             </td>
@@ -4703,12 +4703,15 @@
         const loginScreen = document.getElementById('screen-admin-login');
         const adminPanel  = document.getElementById('screen-admin-panel');
 
+        const manageCard = document.getElementById('admin-candidate-manage-card');
         if (this.state.isAdminLoggedIn) {
           if (loginScreen) loginScreen.style.display = 'none';
           if (adminPanel)  adminPanel.style.display  = 'block';
+          if (manageCard)  manageCard.style.display  = 'block';
         } else {
           if (loginScreen) loginScreen.style.display = 'block';
           if (adminPanel)  adminPanel.style.display  = 'none';
+          if (manageCard)  manageCard.style.display  = 'none';
         }
 
         // Tunjuk/sembunyi butang pentadbiran dalam jadual calon
@@ -4719,6 +4722,76 @@
       },
 
 
+
+      // =========================================================
+      // METHOD: openManageModal
+      // Buka modal pengurusan kehadiran, tarik diri & calon gantian
+      // =========================================================
+      openManageModal(noBadan) {
+        if (!noBadan) return;
+
+        // Semak status pengesahan pentadbir
+        if (!this.state.isAdminLoggedIn) {
+          const pinPrompt = prompt("🔐 Sila masukkan PIN Pentadbir untuk mengurus kehadiran / calon gantian:");
+          if (!pinPrompt) return;
+          if (pinPrompt === 'seketejb26') {
+            this.state.isAdminLoggedIn = true;
+            sessionStorage.setItem('pentauliahan_admin_auth', 'true');
+            this.updateAuthVisuals();
+          } else {
+            alert('❌ PIN Pentadbir tidak sah.');
+            return;
+          }
+        }
+
+        const c = this.state.candidates.find(x => (x.noBadan === noBadan || x.noGiliran === noBadan));
+        if (!c) {
+          alert('Rekod calon tidak dijumpai.');
+          return;
+        }
+
+        const modal = document.getElementById('modal-manage-backdrop');
+        if (!modal) return;
+
+        document.getElementById('manage-modal-hidden-id').value = noBadan;
+        document.getElementById('manage-modal-name').textContent = (c.nama || '-').toUpperCase();
+        document.getElementById('manage-modal-nobadan').textContent = noBadan;
+        document.getElementById('manage-modal-unit').textContent = c.unit || '-';
+        document.getElementById('manage-modal-school').textContent = (c.sekolah || '-').toUpperCase();
+
+        // Tentukan status semasa
+        let currentAct = 'HADIR';
+        if (c.isTarikDiri || c.statusText === 'TARIK DIRI' || (c.catatan && c.catatan.includes('TARIK DIRI'))) {
+          currentAct = 'TARIK DIRI';
+        } else if (c.isAbsent || c.statusText === 'TH' || (c.catatan && c.catatan.includes('TIDAK HADIR'))) {
+          currentAct = 'TIDAK HADIR';
+        } else if (c.catatan && c.catatan.includes('GANTIAN')) {
+          currentAct = 'TUKAR PESERTA';
+        }
+        document.getElementById('modal-select-action').value = currentAct;
+
+        const wrapNew = document.getElementById('modal-wrap-newname');
+        if (wrapNew) wrapNew.style.display = (currentAct === 'TUKAR PESERTA') ? 'block' : 'none';
+        
+        document.getElementById('modal-input-newname').value = '';
+        document.getElementById('modal-input-catatan').value = c.catatan || '';
+        
+        const alertBox = document.getElementById('modal-manage-status-alert');
+        if (alertBox) alertBox.style.display = 'none';
+
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      },
+
+      // =========================================================
+      // METHOD: closeManageModal
+      // Tutup modal pengurusan calon
+      // =========================================================
+      closeManageModal() {
+        const modal = document.getElementById('modal-manage-backdrop');
+        if (modal) modal.style.display = 'none';
+        document.body.style.overflow = '';
+      },
 
       // =========================================================
       // METHOD: openCandidateSlip
@@ -5706,139 +5779,152 @@
 
 
       bindCandidateManageEvents() {
-
-        const form = document.getElementById('form-manage-candidate');
-
-        const searchManage = document.getElementById('input-manage-search');
-
-        const statusBox = document.getElementById('candidate-action-status');
-
-
-
-        searchManage?.addEventListener('input', (e) => {
-
-          this.populateCandidateDropdown(e.target.value);
-
+        // Toggle input nama gantian apabila Tukar Peserta dipilih dalam modal
+        const modalSelectAction = document.getElementById('modal-select-action');
+        const modalWrapNewname = document.getElementById('modal-wrap-newname');
+        modalSelectAction?.addEventListener('change', (e) => {
+          if (modalWrapNewname) {
+            modalWrapNewname.style.display = (e.target.value === 'TUKAR PESERTA') ? 'block' : 'none';
+          }
         });
 
+        // Toggle input nama gantian dalam borang kad atas
+        const selectActionInline = document.getElementById('select-candidate-action');
+        const wrapNewnameInline = document.getElementById('wrap-candidate-newname');
+        selectActionInline?.addEventListener('change', (e) => {
+          if (wrapNewnameInline) {
+            wrapNewnameInline.style.display = (e.target.value === 'TUKAR PESERTA') ? 'block' : 'none';
+          }
+        });
 
+        // Submit form Modal Pengurusan Calon
+        const modalForm = document.getElementById('form-modal-manage-candidate');
+        const modalAlert = document.getElementById('modal-manage-status-alert');
+        const btnSave = document.getElementById('btn-save-candidate-status');
 
-        form?.addEventListener('submit', async (e) => {
-
+        modalForm?.addEventListener('submit', async (e) => {
           e.preventDefault();
-
-          const noBadan = document.getElementById('select-candidate-id').value;
-
-          const statusType = document.getElementById('select-candidate-action').value;
-
-          const newName = document.getElementById('input-candidate-newname').value;
-
-
+          const noBadan = document.getElementById('manage-modal-hidden-id').value;
+          const statusType = document.getElementById('modal-select-action').value;
+          const newName = (document.getElementById('modal-input-newname').value || '').trim();
+          const catatan = (document.getElementById('modal-input-catatan').value || '').trim();
 
           if (!noBadan) {
-
-            alert('Sila pilih calon terlebih dahulu.');
-
+            alert('Ralat: Tiada calon dipilih.');
             return;
-
           }
 
+          if (statusType === 'TUKAR PESERTA' && !newName) {
+            alert('Sila masukkan nama penuh calon gantian.');
+            return;
+          }
 
+          if (btnSave) {
+            btnSave.disabled = true;
+            btnSave.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
+          }
 
-          statusBox.style.display = 'block';
-
-          statusBox.style.background = '#eff6ff';
-
-          statusBox.style.color = '#1e40af';
-
-          statusBox.innerText = `Sedang mengemas kini status calon ${noBadan}...`;
-
-
+          if (modalAlert) {
+            modalAlert.style.display = 'block';
+            modalAlert.style.background = '#eff6ff';
+            modalAlert.style.color = '#1e40af';
+            modalAlert.style.border = '1px solid #bfdbfe';
+            modalAlert.innerText = `⏳ Sedang menyimpan status calon ${noBadan} ke Google Sheets...`;
+          }
 
           const payload = {
-
             noBadan: noBadan,
-
             newStatus: statusType,
-
             newName: newName,
-
-            catatan: statusType
-
+            catatan: catatan ? `${statusType} - ${catatan}` : statusType
           };
 
-
-
           try {
-
             const res = await runBackendAction('updateCandidateStatusRecord', { payload: payload, pin: 'seketejb26' });
 
-            statusBox.style.background = '#dcfce7';
-
-            statusBox.style.color = '#166534';
-
-            statusBox.innerText = '✅ ' + (res.message || res);
-
-            
-
-            const c = this.state.candidates.find(x => x.noBadan === noBadan);
-
+            // Kemas kini calon dalam memori aplikasi
+            const c = this.state.candidates.find(x => (x.noBadan === noBadan || x.noGiliran === noBadan));
             if (c) {
-
-              c.catatan = statusType;
-
-              if (newName && statusType === 'TUKAR PESERTA') c.nama = newName;
-
+              c.catatan = payload.catatan;
+              if (newName && statusType === 'TUKAR PESERTA') {
+                c.nama = newName.toUpperCase();
+              }
               if (statusType === 'TIDAK HADIR') {
-
                 c.isAbsent = true;
-
                 c.isTarikDiri = false;
-
                 c.statusText = 'TH';
-
               } else if (statusType === 'TARIK DIRI') {
-
                 c.isTarikDiri = true;
-
                 c.isAbsent = false;
-
                 c.statusText = 'TARIK DIRI';
-
-              } else {
-
+              } else if (statusType === 'HADIR') {
                 c.isAbsent = false;
-
                 c.isTarikDiri = false;
-
+                if (c.statusText === 'TH' || c.statusText === 'TARIK DIRI') {
+                  c.statusText = 'GGG';
+                }
               }
 
+              // Simpan ke localStorage untuk kekal aktif
+              try {
+                const overrides = JSON.parse(localStorage.getItem('PPDJB_CANDIDATE_OVERRIDES') || '{}');
+                overrides[noBadan] = {
+                  nama: c.nama,
+                  catatan: c.catatan,
+                  statusText: c.statusText,
+                  isAbsent: c.isAbsent,
+                  isTarikDiri: c.isTarikDiri
+                };
+                localStorage.setItem('PPDJB_CANDIDATE_OVERRIDES', JSON.stringify(overrides));
+              } catch(ovErr) {
+                console.warn('Gagal simpan local overrides:', ovErr);
+              }
             }
 
+            // Kira semula statistik & kemas kini UI
             this.recalculateAllStats();
-
             this.renderCandidatesTable();
-        this.renderTopResults();
+            this.renderTopResults();
+            try { this.updateCharts(); } catch(chErr) {}
 
-          } catch(err) {
+            if (modalAlert) {
+              modalAlert.style.background = '#dcfce7';
+              modalAlert.style.color = '#166534';
+              modalAlert.style.border = '1px solid #86efac';
+              modalAlert.innerText = `✅ Status calon ${noBadan} berjaya dikemas kini!`;
+            }
 
-            statusBox.style.background = '#fee2e2';
+            setTimeout(() => {
+              this.closeManageModal();
+              if (btnSave) {
+                btnSave.disabled = false;
+                btnSave.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Simpan Status';
+              }
+            }, 1000);
 
-            statusBox.style.color = '#991b1b';
-
-            statusBox.innerText = '❌ Ralat: ' + err.message;
-
+          } catch (err) {
+            console.error('Ralat kemas kini status calon:', err);
+            if (modalAlert) {
+              modalAlert.style.background = '#fee2e2';
+              modalAlert.style.color = '#991b1b';
+              modalAlert.style.border = '1px solid #fca5a5';
+              modalAlert.innerText = '❌ Ralat: ' + (err.message || err);
+            }
+            if (btnSave) {
+              btnSave.disabled = false;
+              btnSave.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Simpan Status';
+            }
           }
-
         });
 
-      }
+        // Pastikan carian dropdown kad pengurusan atas juga berfungsi
+        const searchManage = document.getElementById('input-manage-search');
+        searchManage?.addEventListener('input', (e) => {
+          this.populateCandidateDropdown(e.target.value);
+        });
+      },
 
-    };
-
-
-
-    window.App = App;
+      window.App = App;
     if (document.readyState === 'loading') {
 
       document.addEventListener('DOMContentLoaded', () => App.init());
@@ -5919,6 +6005,84 @@
           <i class="fa-solid fa-print"></i> Cetak Slip Rasmi
         </button>
       </div>
+
+    </div>
+  </div>
+
+
+  <!-- MODAL PENGURUSAN KEHADIRAN & CALON GANTIAN (POPUP INTERAKTIF) -->
+  <div id="modal-manage-backdrop" class="modal-backdrop" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.75); backdrop-filter:blur(4px); z-index:9999; justify-content:center; align-items:center; padding:16px;">
+    <div class="modal-box" style="background:#ffffff; border-radius:16px; border:1px solid #cbd5e1; max-width:540px; width:100%; max-height:90vh; overflow-y:auto; padding:28px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.25); position:relative;">
+      
+      <!-- BUTANG TUTUP -->
+      <button class="btn-close-modal" id="btn-close-manage-x" onclick="window.App.closeManageModal()" style="position:absolute; top:18px; right:18px; background:transparent; border:none; font-size:20px; color:#64748b; cursor:pointer;">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <!-- PENGEPALA MODAL -->
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:18px; padding-bottom:14px; border-bottom:2px solid #f1f5f9;">
+        <div style="width:42px; height:42px; border-radius:10px; background:#eff6ff; color:#1e40af; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0;">
+          <i class="fa-solid fa-user-pen"></i>
+        </div>
+        <div>
+          <h3 style="font-size:17px; font-weight:800; color:#0f172a; margin:0;">Pengurusan Kehadiran & Calon</h3>
+          <p style="font-size:12.5px; color:#64748b; margin:2px 0 0 0;">Kemas kini status kehadiran, tarik diri atau pertukaran calon</p>
+        </div>
+      </div>
+
+      <!-- KAD MAKLUMAT CALON TERPILIH -->
+      <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px; margin-bottom:18px;">
+        <div style="font-size:12px; font-weight:700; color:#64748b; text-transform:uppercase; margin-bottom:4px;">Calon Yang Dipilih:</div>
+        <div id="manage-modal-name" style="font-size:15px; font-weight:800; color:#0f172a; margin-bottom:4px;">-</div>
+        <div style="display:flex; gap:12px; font-size:12.5px; color:#475569; flex-wrap:wrap;">
+          <div><strong style="color:#64748b;">No Badan:</strong> <span id="manage-modal-nobadan" style="font-weight:700; color:#1e40af; font-family:monospace;">-</span></div>
+          <div><strong style="color:#64748b;">Unit:</strong> <span id="manage-modal-unit" style="font-weight:700;">-</span></div>
+          <div><strong style="color:#64748b;">Sekolah:</strong> <span id="manage-modal-school" style="font-weight:700;">-</span></div>
+        </div>
+      </div>
+
+      <!-- BORANG KEMAS KINI -->
+      <form id="form-modal-manage-candidate">
+        <input type="hidden" id="manage-modal-hidden-id" value="">
+        
+        <div class="form-field" style="margin-bottom:14px;">
+          <label for="modal-select-action" style="font-size:13px; font-weight:700; color:#334155; margin-bottom:6px; display:block;">
+            Pilih Status Kehadiran / Tindakan:
+          </label>
+          <select id="modal-select-action" required style="width:100%; padding:10px 12px; border:1.5px solid #cbd5e1; border-radius:8px; font-size:13.5px; font-weight:700; color:#0f172a; outline:none; background:#ffffff;">
+            <option value="HADIR">✅ HADIR (SEDIA DIUJI)</option>
+            <option value="TIDAK HADIR">❌ TIDAK HADIR (TH)</option>
+            <option value="TARIK DIRI">🚶 TARIK DIRI (TD)</option>
+            <option value="TUKAR PESERTA">🔄 TUKAR PESERTA (CALON GANTIAN)</option>
+          </select>
+        </div>
+
+        <!-- MEDAN NAMA GANTIAN (DIPAPARKAN JIKA TUKAR PESERTA) -->
+        <div class="form-field" id="modal-wrap-newname" style="display:none; margin-bottom:14px; background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:12px;">
+          <label for="modal-input-newname" style="font-size:12.5px; font-weight:800; color:#1e40af; margin-bottom:4px; display:block;">
+            <i class="fa-solid fa-user-plus"></i> Nama Penuh Calon Gantian Baru:
+          </label>
+          <input type="text" id="modal-input-newname" placeholder="Masukkan nama penuh pengganti..." style="width:100%; padding:9px 12px; border:1px solid #93c5fd; border-radius:6px; font-size:13.5px; font-weight:700; outline:none; background:#ffffff;">
+        </div>
+
+        <div class="form-field" style="margin-bottom:18px;">
+          <label for="modal-input-catatan" style="font-size:13px; font-weight:700; color:#334155; margin-bottom:6px; display:block;">
+            Catatan Tambahan (Pilihan):
+          </label>
+          <input type="text" id="modal-input-catatan" placeholder="Contoh: Sijil Sakit / Masalah Kesihatan / Kecemasan..." style="width:100%; padding:9px 12px; border:1.5px solid #cbd5e1; border-radius:8px; font-size:13.5px; outline:none;">
+        </div>
+
+        <div id="modal-manage-status-alert" style="display:none; padding:12px; border-radius:8px; font-size:13px; font-weight:700; margin-bottom:14px;"></div>
+
+        <div style="display:flex; justify-content:flex-end; gap:10px;">
+          <button type="button" onclick="window.App.closeManageModal()" class="btn-action outline" style="width:auto; padding:9px 16px;">
+            Batal
+          </button>
+          <button type="submit" id="btn-save-candidate-status" class="btn-action primary" style="width:auto; padding:9px 20px;">
+            <i class="fa-solid fa-floppy-disk"></i> Simpan Status
+          </button>
+        </div>
+      </form>
 
     </div>
   </div>
