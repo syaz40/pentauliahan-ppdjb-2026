@@ -4540,18 +4540,20 @@
           }
 
           let matchStatus = true;
+          const isNonAttending = c.isAbsent || c.isTarikDiri || c.statusText === 'TH' || c.statusText === 'TARIK DIRI' || (c.catatan && (c.catatan.includes('TIDAK HADIR') || c.catatan.includes('TARIK DIRI')));
+
           if (statusVal === 'PASS') {
-            matchStatus = (c.statusText === 'LLL' && !c.isAbsent && !c.isTarikDiri);
+            matchStatus = (c.statusText === 'LLL' && !isNonAttending);
           } else if (statusVal === 'CONDITIONAL') {
-            matchStatus = (c.rawOverall >= 0.50 && c.statusText !== 'LLL' && !c.isAbsent && !c.isTarikDiri);
+            matchStatus = (c.rawOverall >= 0.50 && c.statusText !== 'LLL' && !isNonAttending);
           } else if (statusVal === 'FAIL') {
-            matchStatus = (c.rawOverall > 0 && c.rawOverall < 0.50 && c.statusText !== 'LLL' && !c.isAbsent && !c.isTarikDiri);
+            matchStatus = (c.rawOverall > 0 && c.rawOverall < 0.50 && c.statusText !== 'LLL' && !isNonAttending);
           } else if (statusVal === 'PENDING') {
-            matchStatus = (c.rawOverall === 0 && !c.isAbsent && !c.isTarikDiri && c.statusText !== 'TH');
+            matchStatus = (c.rawOverall === 0 && !isNonAttending && c.statusText !== 'TH' && c.statusText !== 'TARIK DIRI');
           } else if (statusVal === 'ABSENT') {
-            matchStatus = c.isAbsent || c.statusText === 'TH' || (c.catatan && c.catatan.includes('TIDAK HADIR'));
+            matchStatus = isNonAttending;
           } else if (statusVal === 'WITHDRAW') {
-            matchStatus = c.isTarikDiri || c.statusText === 'TARIK DIRI' || (c.catatan && c.catatan.includes('TARIK DIRI'));
+            matchStatus = (c.isTarikDiri || c.statusText === 'TARIK DIRI' || (c.catatan && c.catatan.includes('TARIK DIRI')));
           }
 
           return matchSearch && matchUnit && matchKumpulan && matchJantina && matchStatus;
