@@ -4606,20 +4606,13 @@
                 <button class="btn-slip-view" onclick="window.App.openCandidateSlip('${noBadan}')" title="Buka Slip Keputusan Rasmi">
                   <i class="fa-solid fa-receipt"></i> Slip
                 </button>
-                <button class="btn-table-pick" onclick="window.App.openManageModal('${noBadan}')" title="Urus Kehadiran / Tarik Diri / Gantian">
+                <button class="btn-table-pick" onclick="window.App.openManageModal('${noBadan}')" title="Urus Kehadiran / Tarik Diri / Calon Gantian">
                   <i class="fa-solid fa-user-pen"></i> Urus
                 </button>
               </div>
             </td>
           `;
           tbody.appendChild(tr);
-        });
-
-        tbody.querySelectorAll('.btn-table-pick').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            const id = e.currentTarget.getAttribute('data-id');
-            this.selectCandidateForManage(id);
-          });
         });
 
         const countLabel = document.getElementById('label-table-count');
@@ -4629,33 +4622,8 @@
       },
 
       selectCandidateForManage(noBadan) {
-
-        const select = document.getElementById('select-candidate-id');
-
-        if (!select) return;
-
-        
-
-        document.getElementById('input-manage-search').value = '';
-
-        this.populateCandidateDropdown('');
-
-        select.value = noBadan;
-
-
-
-        const manageCard = document.getElementById('admin-candidate-manage-card');
-
-        if (manageCard) {
-
-          manageCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-          manageCard.style.outline = '3px solid var(--royal-accent)';
-
-          setTimeout(() => manageCard.style.outline = 'none', 1200);
-
-        }
-
+        if (!noBadan) return;
+        this.openManageModal(noBadan);
       },
 
 
@@ -4732,14 +4700,14 @@
 
         // Semak status pengesahan pentadbir
         if (!this.state.isAdminLoggedIn) {
-          const pinPrompt = prompt("🔐 Sila masukkan PIN Pentadbir untuk mengurus kehadiran / calon gantian:");
+          const pinPrompt = prompt("🔐 Sila masukkan PIN Pentadbir (seketejb26) untuk mengurus kehadiran / calon gantian:");
           if (!pinPrompt) return;
-          if (pinPrompt === 'seketejb26') {
+          if (pinPrompt.trim() === 'seketejb26') {
             this.state.isAdminLoggedIn = true;
             sessionStorage.setItem('pentauliahan_admin_auth', 'true');
             this.updateAuthVisuals();
           } else {
-            alert('❌ PIN Pentadbir tidak sah.');
+            alert('❌ PIN Pentadbir tidak sah. Sila cuba lagi.');
             return;
           }
         }
@@ -4756,7 +4724,7 @@
         document.getElementById('manage-modal-hidden-id').value = noBadan;
         document.getElementById('manage-modal-name').textContent = (c.nama || '-').toUpperCase();
         document.getElementById('manage-modal-nobadan').textContent = noBadan;
-        document.getElementById('manage-modal-unit').textContent = c.unit || '-';
+        document.getElementById('manage-modal-unit').textContent = `${c.unit || '-'} • Pangkat: ${c.pangkat || (c.unit === 'TKRS' ? 'Koperal' : 'Sarjan')}`;
         document.getElementById('manage-modal-school').textContent = (c.sekolah || '-').toUpperCase();
 
         // Tentukan status semasa
@@ -5921,6 +5889,96 @@
         const searchManage = document.getElementById('input-manage-search');
         searchManage?.addEventListener('input', (e) => {
           this.populateCandidateDropdown(e.target.value);
+        });
+
+        // Submit form kad atas (inline form pada Tab 3)
+        const inlineForm = document.getElementById('form-manage-candidate');
+        const inlineStatus = document.getElementById('candidate-action-status');
+        inlineForm?.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const candidateSelect = document.getElementById('select-candidate-id');
+          const noBadan = candidateSelect?.value;
+          const statusType = document.getElementById('select-candidate-action')?.value;
+          const newName = (document.getElementById('input-candidate-newname')?.value || '').trim();
+
+          if (!noBadan) {
+            alert('Sila pilih calon terlebih dahulu.');
+            return;
+          }
+
+          if (statusType === 'TUKAR PESERTA' && !newName) {
+            alert('Sila masukkan nama penuh calon gantian.');
+            return;
+          }
+
+          if (inlineStatus) {
+            inlineStatus.style.display = 'block';
+            inlineStatus.style.background = '#eff6ff';
+            inlineStatus.style.color = '#1e40af';
+            inlineStatus.style.border = '1px solid #bfdbfe';
+            inlineStatus.innerText = `⏳ Menyimpan status calon ${noBadan}...`;
+          }
+
+          const payload = {
+            noBadan: noBadan,
+            newStatus: statusType,
+            newName: newName,
+            catatan: statusType === 'TUKAR PESERTA' ? `GANTIAN: ${newName}` : statusType
+          };
+
+          try {
+            await runBackendAction('updateCandidateStatusRecord', { payload: payload, pin: 'seketejb26' });
+
+            const c = this.state.candidates.find(x => (x.noBadan === noBadan || x.noGiliran === noBadan));
+            if (c) {
+              c.catatan = payload.catatan;
+              if (newName && statusType === 'TUKAR PESERTA') c.nama = newName.toUpperCase();
+              if (statusType === 'TIDAK HADIR') { c.isAbsent = true; c.isTarikDiri = false; c.statusText = 'TH'; }
+              else if (statusType === 'TARIK DIRI') { c.isTarikDiri = true; c.isAbsent = false; c.statusText = 'TARIK DIRI'; }
+              else if (statusType === 'HADIR') { c.isAbsent = false; c.isTarikDiri = false; if (c.statusText === 'TH' || c.statusText === 'TARIK DIRI') c.statusText = 'GGG'; }
+
+              try {
+                const overrides = JSON.parse(localStorage.getItem('PPDJB_CANDIDATE_OVERRIDES') || '{}');
+                overrides[noBadan] = { nama: c.nama, catatan: c.catatan, statusText: c.statusText, isAbsent: c.isAbsent, isTarikDiri: c.isTarikDiri };
+                localStorage.setItem('PPDJB_CANDIDATE_OVERRIDES', JSON.stringify(overrides));
+              } catch(e) {}
+            }
+
+            this.recalculateAllStats();
+            this.renderCandidatesTable();
+            this.renderTopResults();
+            try { this.updateCharts(); } catch(e) {}
+
+            if (inlineStatus) {
+              inlineStatus.style.background = '#dcfce7';
+              inlineStatus.style.color = '#166534';
+              inlineStatus.style.border = '1px solid #86efac';
+              inlineStatus.innerText = `✅ Status calon ${noBadan} (${statusType}) berjaya dikemas kini!`;
+            }
+          } catch(err) {
+            if (inlineStatus) {
+              inlineStatus.style.background = '#fee2e2';
+              inlineStatus.style.color = '#991b1b';
+              inlineStatus.style.border = '1px solid #fca5a5';
+              inlineStatus.innerText = `❌ Ralat: ` + (err.message || err);
+            }
+          }
+        });
+
+        // Global ESC key and backdrop click to close modals
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            this.closeCandidateSlip();
+            this.closeManageModal();
+          }
+        });
+
+        document.getElementById('modal-manage-backdrop')?.addEventListener('click', (e) => {
+          if (e.target.id === 'modal-manage-backdrop') this.closeManageModal();
+        });
+
+        document.getElementById('modal-slip-backdrop')?.addEventListener('click', (e) => {
+          if (e.target.id === 'modal-slip-backdrop') this.closeCandidateSlip();
         });
       },
 
