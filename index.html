@@ -10,7 +10,7 @@
 
   <title>Sistem Pengurusan Pentauliahan KRS & TKRS — PPD Johor Bahru 2026</title>
 
-  
+
 
   <!-- Typography & Icons -->
 
@@ -1948,7 +1948,7 @@
 
     }
 
-  
+
     /* KAWALAN PAPARAN KOLUM MARKAH: TERSEMBUNYI UNTUK AWAM, MUNCUL KETIKA ADMIN */
     th.admin-score-col, td.admin-score-col {
       display: none;
@@ -1984,7 +1984,7 @@
     /* =========================================================================
        SISTEM GAYAAN KORPORAT KEPUTUSAN, JADUAL & SLIP RASMI (PREMIUM UI)
        ========================================================================= */
-    
+
     /* KAD PODIUM & LEADERBOARD CALON TERBAIK */
     .top-category-card {
       background: #ffffff;
@@ -2261,7 +2261,7 @@
         display: none !important;
       }
     }
-  
+
   </style>
 
 </head>
@@ -2360,7 +2360,7 @@
 
     <section class="tab-content active" id="tab-program">
 
-      
+
 
       <div class="app-card" style="border-left: 5px solid var(--emerald-green);">
 
@@ -2382,7 +2382,7 @@
 
         </p>
 
-        
+
 
         <div class="sym-grid-4" style="margin-bottom: 0;">
 
@@ -2452,7 +2452,7 @@
 
       <div class="sym-grid-2">
 
-        
+
 
         <!-- MATLAMAT PROGRAM (TONED DOWN TONA SLATE ELEGAN) -->
 
@@ -2466,7 +2466,7 @@
 
             </div>
 
-            
+
 
             <div class="matlamat-box">
 
@@ -2476,7 +2476,7 @@
 
               </p>
 
-              
+
 
               <div class="matlamat-pillars">
 
@@ -2524,7 +2524,7 @@
 
           </div>
 
-          
+
 
           <div class="objective-grid">
 
@@ -2728,7 +2728,7 @@
 
         </div>
 
-        
+
 
         <div class="schedule-grid">
           <div class="schedule-item">
@@ -2785,7 +2785,7 @@
 
     <section class="tab-content" id="tab-analytics">
 
-      
+
 
       <!-- 4 KAD MAKRO -->
 
@@ -3001,7 +3001,7 @@
 
     <section class="tab-content" id="tab-candidates">
 
-      
+
 
       <!-- PANEL PENGURUSAN KEHADIRAN & GANTIAN (ADMIN SAHAJA) -->
 
@@ -3019,7 +3019,7 @@
 
         </div>
 
-        
+
 
         <p style="font-size:13.5px; color:var(--slate-600); margin-bottom:16px;">
 
@@ -3115,7 +3115,7 @@
 
         </form>
 
-        
+
 
         <div id="candidate-action-status" style="display:none; margin-top:14px; padding:12px; border-radius:8px; font-size:13.5px; font-weight:600;"></div>
 
@@ -3347,7 +3347,7 @@
 
       <!-- GRID 4 KATEGORI -->
       <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(500px, 1fr)); gap:24px;" id="top-cards-grid">
-        
+
         <!-- 1. TKRS LELAKI -->
         <div class="top-category-card tkrs-l" data-category="tkrs-l">
           <div class="top-category-header">
@@ -3465,7 +3465,7 @@
 
     <section class="tab-content" id="tab-admin">
 
-      
+
 
       <!-- SCREEN LOGIN ADMIN -->
 
@@ -3517,7 +3517,7 @@
 
       <div id="screen-admin-panel" style="display: none;">
 
-        
+
 
         <div class="app-card" style="background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%); color:#ffffff;">
 
@@ -3551,7 +3551,7 @@
 
         <div class="sym-grid-2">
 
-          
+
 
           <!-- 1. WAJARAN KOMPONEN UJIAN -->
 
@@ -3852,13 +3852,13 @@
 
         return new Promise((resolve, reject) => {
 
-          const runner = google.script.run
+          const runner = google.script.run;
 
             .withSuccessHandler(res => resolve(res))
 
             .withFailureHandler(err => reject(err));
 
-          
+
 
           if (actionName === 'getDashboardData') runner.getDashboardData();
 
@@ -4020,7 +4020,7 @@
 
 
 
-      
+
       applyLocalOverrides() {
         // Tiada LocalStorage — Status murid kini dibaca 100% secara LIVE dari tab Google Sheets: PESERTA TIDAK HADIR
       },
@@ -4068,7 +4068,7 @@
         if (syncBadge) syncBadge.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyegerak Live Sheet...';
 
         const SPREADSHEET_ID = '1_YmAJ6XVfBREx4_NDTUWRMXAL1Jgi-1vSFS2528dtW0';
-        
+
         // Helper untuk memuat turun CSV Google Sheet secara Live
         const fetchSheetCsv = async (sheetName) => {
           try {
@@ -4325,7 +4325,7 @@
 
             c.statusText = (passK ? 'L' : 'G') + (passSkill ? 'L' : 'G') + (passOverall ? 'L' : 'G');
 
-            
+
 
             if (c.statusText === 'LLL' || (passK && passSkill && passOverall)) {
 
@@ -4411,7 +4411,7 @@
 
 
 
-      
+
       renderTopResults() {
         const renderGroup = (elementId, candidatesList) => {
           const tbody = document.getElementById(elementId);
@@ -4753,10 +4753,10 @@
 
         const wrapNew = document.getElementById('modal-wrap-newname');
         if (wrapNew) wrapNew.style.display = (currentAct === 'TUKAR PESERTA') ? 'block' : 'none';
-        
+
         document.getElementById('modal-input-newname').value = '';
         document.getElementById('modal-input-catatan').value = c.catatan || '';
-        
+
         const alertBox = document.getElementById('modal-manage-status-alert');
         if (alertBox) alertBox.style.display = 'none';
 
@@ -5238,7 +5238,7 @@
 
         if (this.state.charts.topSchools) {
 
-          const sortedSchools = Object.keys(schoolMap)
+          const sortedSchools = Object.keys(schoolMap);
 
             .map(k => ({ name: k, count: schoolMap[k] }))
 
@@ -5333,7 +5333,7 @@
 
         });
 
-        
+
 
         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
 
@@ -5387,7 +5387,7 @@
 
         select.innerHTML = '<option value="">-- Pilih Calon (' + filtered.length + ' calon dijumpai) --</option>';
 
-        
+
 
         filtered.forEach(c => {
 
@@ -5518,7 +5518,7 @@
 
             this.state.currentWajaran[s.key] = val / 100.0;
 
-            
+
 
             const totalW = (this.state.currentWajaran.wajaranKawad + this.state.currentWajaran.wajaranBM + this.state.currentWajaran.wajaranIkatan) * 100;
 
@@ -5941,7 +5941,7 @@
   <!-- MODAL SLIP KEPUTUSAN CALON RASMI (DIGITAL DOSSIER) -->
   <div id="modal-slip-backdrop" class="modal-backdrop" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.75); backdrop-filter:blur(4px); z-index:9999; justify-content:center; align-items:center; padding:16px;">
     <div class="modal-box-lg" style="background:#ffffff; border-radius:var(--radius-xl); border:1px solid #cbd5e1; max-width:680px; width:100%; max-height:90vh; overflow-y:auto; padding:32px; box-shadow:var(--shadow-modal); position:relative;">
-      
+
       <!-- BUTANG TUTUP -->
       <button class="btn-close-modal" id="btn-close-slip-x" onclick="window.App.closeCandidateSlip()" style="position:absolute; top:20px; right:20px; background:transparent; border:none; font-size:22px; color:var(--slate-400); cursor:pointer;">
         <i class="fa-solid fa-xmark"></i>
@@ -6013,7 +6013,7 @@
   <!-- MODAL PENGURUSAN KEHADIRAN & CALON GANTIAN (POPUP INTERAKTIF) -->
   <div id="modal-manage-backdrop" class="modal-backdrop" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.75); backdrop-filter:blur(4px); z-index:9999; justify-content:center; align-items:center; padding:16px;">
     <div class="modal-box" style="background:#ffffff; border-radius:16px; border:1px solid #cbd5e1; max-width:540px; width:100%; max-height:90vh; overflow-y:auto; padding:28px; box-shadow:0 20px 25px -5px rgba(0,0,0,0.25); position:relative;">
-      
+
       <!-- BUTANG TUTUP -->
       <button class="btn-close-modal" id="btn-close-manage-x" onclick="window.App.closeManageModal()" style="position:absolute; top:18px; right:18px; background:transparent; border:none; font-size:20px; color:#64748b; cursor:pointer;">
         <i class="fa-solid fa-xmark"></i>
@@ -6044,7 +6044,7 @@
       <!-- BORANG KEMAS KINI -->
       <form id="form-modal-manage-candidate">
         <input type="hidden" id="manage-modal-hidden-id" value="">
-        
+
         <div class="form-field" style="margin-bottom:14px;">
           <label for="modal-select-action" style="font-size:13px; font-weight:700; color:#334155; margin-bottom:6px; display:block;">
             Pilih Status Kehadiran / Tindakan:
