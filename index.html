@@ -4489,7 +4489,7 @@
                   c.ikatan = (s.rawIkatan * 100).toFixed(1);
                   c.overall = (s.rawOverall * 100).toFixed(1) + '%';
                   c.statusText = s.statusText || 'GGG';
-                  c.isEvaluated = (s.rawKawad > 0 || s.rawBantuMula > 0 || s.rawIkatan > 0);
+                  c.isEvaluated = (s.rawKawad > 0 && s.rawBantuMula > 0 && s.rawIkatan > 0); // Selesai = SEMUA 3 modul
                 }
               });
             }
@@ -4624,7 +4624,7 @@
 
 
 
-          if (rawK > 0 || rawBM > 0 || rawIK > 0) {
+          if (rawK > 0 && rawBM > 0 && rawIK > 0) { // Selesai = SEMUA 3 modul ada markah
 
             evaluated++;
 
@@ -5487,7 +5487,7 @@
 
 
 
-          if (rawK > 0 || rawBM > 0 || rawIK > 0) {
+          if (rawK > 0 && rawBM > 0 && rawIK > 0) { // Selesai = SEMUA 3 modul ada markah
 
             if (isTKRS) {
 

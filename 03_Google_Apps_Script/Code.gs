@@ -229,7 +229,7 @@ function getDashboardData() {
     var catatan = String(row[11] || '');
 
     if (sekolah) schoolSet[sekolah] = true;
-    var isEvaluated = (kawad > 0 || bantuMula > 0 || ikatan > 0);
+    var isEvaluated = (kawad > 0 && bantuMula > 0 && ikatan > 0); // Selesai = SEMUA 3 modul ada markah
     var isAbsent = catatan.toUpperCase().indexOf('TH') !== -1 || catatan.toUpperCase().indexOf('TIDAK HADIR') !== -1;
     var isTarikDiri = catatan.toUpperCase().indexOf('TARIK DIRI') !== -1;
     var isTukar = catatan.toUpperCase().indexOf('GANTIAN') !== -1 || catatan.toUpperCase().indexOf('TUKAR') !== -1;
@@ -311,7 +311,7 @@ function getDashboardData() {
     var catatan = String(row[11] || '');
 
     if (sekolah) schoolSet[sekolah] = true;
-    var isEvaluated = (kawad > 0 || bantuMula > 0 || ikatan > 0);
+    var isEvaluated = (kawad > 0 && bantuMula > 0 && ikatan > 0); // Selesai = SEMUA 3 modul ada markah
     var isAbsent = catatan.toUpperCase().indexOf('TH') !== -1 || catatan.toUpperCase().indexOf('TIDAK HADIR') !== -1;
     var isTarikDiri = catatan.toUpperCase().indexOf('TARIK DIRI') !== -1;
     var isTukar = catatan.toUpperCase().indexOf('GANTIAN') !== -1 || catatan.toUpperCase().indexOf('TUKAR') !== -1;
