@@ -137,8 +137,12 @@ function getDashboardData() {
   var sheetTKRSKawad = ss ? ss.getSheetByName('MARKAH_TKRS_KAWAD') : null;
   var sheetKRSKawad = ss ? ss.getSheetByName('MARKAH_KRS_KAWAD') : null;
 
-  var dataTKRS = sheetTKRS && sheetTKRS.getLastRow() >= 3 ? sheetTKRS.getRange(3, 1, sheetTKRS.getLastRow() - 2, 12).getValues() : [];
-  var dataKRS = sheetKRS && sheetKRS.getLastRow() >= 3 ? sheetKRS.getRange(3, 1, sheetKRS.getLastRow() - 2, 12).getValues() : [];
+  // Ambil data dan tapis baris kosong (kolum Sekolah mestilah ada nilai)
+  var rawDataTKRS = sheetTKRS && sheetTKRS.getLastRow() >= 3 ? sheetTKRS.getRange(3, 1, sheetTKRS.getLastRow() - 2, 12).getValues() : [];
+  var rawDataKRS = sheetKRS && sheetKRS.getLastRow() >= 3 ? sheetKRS.getRange(3, 1, sheetKRS.getLastRow() - 2, 12).getValues() : [];
+  // PEMBETULAN: Tapis baris kosong supaya getLastRow() tidak mengira baris kosong sebagai calon
+  var dataTKRS = rawDataTKRS.filter(function(row) { return row[3] && String(row[3]).trim() !== ''; });
+  var dataKRS = rawDataKRS.filter(function(row) { return row[3] && String(row[3]).trim() !== ''; });
   var dataTKRSKawad = sheetTKRSKawad && sheetTKRSKawad.getLastRow() >= 2 ? sheetTKRSKawad.getRange(2, 1, sheetTKRSKawad.getLastRow() - 1, 10).getValues() : [];
   var dataKRSKawad = sheetKRSKawad && sheetKRSKawad.getLastRow() >= 2 ? sheetKRSKawad.getRange(2, 1, sheetKRSKawad.getLastRow() - 1, 10).getValues() : [];
 
