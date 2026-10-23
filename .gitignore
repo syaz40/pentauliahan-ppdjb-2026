@@ -11,3 +11,7 @@ __pycache__/
 
 # Temporary logs
 *.log
+
+# Fail peribadi Claude Code (tidak masuk Git)
+CLAUDE.local.md
+.claude/settings.local.json
